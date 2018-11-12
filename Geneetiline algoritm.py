@@ -37,7 +37,7 @@ def fitness(populatsioon,edasi): # edasi - Mitu parimad viiakse üle järgmisess
         
     return parimad
 
-def crossover(parimad): # Loob nõ lapsed, võttes kahelt vektrilt 2 suvalist arvu ja loob 3. suvalise arvu
+def crossover(parimad): # Loob nõ lapsed, võttes kahelt vektorilt 2 suvalist arvu ja loob 3. suvalise arvu
     crossover_children = [[],[],[],[]]
     for i in range(len(parimad)): # Võtab 2 suvaliselt arvu vanematelt
         for j in range(len(parimad[0])-1):
