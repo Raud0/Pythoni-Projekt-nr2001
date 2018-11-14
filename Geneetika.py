@@ -183,9 +183,12 @@ def next_gen(population):
     crossover_x = crossover(elite)
     lucky_x = lucky(population)
     # Mutation ei tööta
-    new_generation.append(elite)
-    new_generation.append(crossover_x)
-    new_generation.append(lucky_x)
+    for i in elite:
+        new_generation.append(i)
+    for i in crossover_x:
+        new_generation.append(i)
+    for i in lucky_x:
+        new_generation.append(i)
     #new_generation.append(mutation_x)
     return new_generation
 
