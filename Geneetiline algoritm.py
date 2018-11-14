@@ -2,28 +2,30 @@ from random import randint
 from math import pi, exp
 from tkinter import *
 
+# Functions
 def sigmoid(x):
     return 1/(1 + exp(-x))
 
-birth_dif = 1000
-exist_dif = 1000
-accel_dif = 1000
-mvmnt_dif = 1000
-cnsme_dif = 1000
-
-organism_list = []
-
-root = Tk()
-
+# World Constants
 worldWIDTH = 2000
 worldHEIGHT = 2000
 screenWIDTH = 1000
 screenHEIGHT = 800
 
+root = Tk()
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
+# Interaction Constants
+birth_dif = 1000
+exist_dif = 1000
+accel_dif = 1000
+mvmnt_dif = 1000
+cnsme_dif = 1000
+organism_list = []
 
+
+# Classes and Functions
 class Organism:
 
     # initialize
@@ -106,11 +108,6 @@ def esialgne_populatsioon(isendite_arv, muutuja):
         for x in range(muutuja-1):
             alg_populatsioon[i].append(randint(0,200))
     return alg_populatsioon
-
-
-esialgne_populatsioon(100, 3)
-
-root.mainloop()
 
 def fitness(populatsioon,edasi): # edasi - Mitu parimad viiakse üle järgmisesse generatsiooni
     parimskoor = []
@@ -195,7 +192,4 @@ print("Lucky ones: ",lucky,"\n")
 
 print("Muteertitud",mutation(algpopulatsioon,parimad,crossover))
     
-    
-
-
-    
+root.mainloop()
