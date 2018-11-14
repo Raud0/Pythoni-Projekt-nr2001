@@ -182,11 +182,15 @@ def next_gen(population):
     elite = fitness(population,4)
     crossover_x = crossover(elite)
     lucky_x = lucky(population)
-    # Mutation ei tööta
-    new_generation.append(elite)
-    new_generation.append(crossover_x)
-    new_generation.append(lucky_x)
-    #new_generation.append(mutation_x)
+    mutation_x = mutation(population,elite,lucky)
+    for i in elite:
+        new_generation.append(i)
+    for i in crossover_x:
+        new_generation.append(i)
+    for i in lucky_x:
+        new_generation.append(i)
+    for i in mutation_x:
+        new_generation.append(i)
     return new_generation
 
 esimene_pop = esialgne_populatsioon(200,3)
