@@ -1,4 +1,4 @@
-from math import exp
+from math import exp, log
 from tkinter import *
 from random import randint, choice
 import time
@@ -26,6 +26,7 @@ cnsme_dif = 1000
 elite_dif = 1000
 mutnt_dif = 1000
 lucky_dif = 1000
+srvvl_dif = 1000
 organism_list = []
 
 
@@ -49,6 +50,7 @@ class Organism:
         self.early = False
         self.child = False
         self.lucky = False
+        self.markedfordeath = False
 
         ACef = round(32*sigmoid(float((self.AC-60))/30))
         ENGef = round(32*sigmoid(float((self.energy-1000)/500)))
@@ -81,12 +83,27 @@ class Organism:
         self.early = False
         self.child = False
         self.lucky = False
+        self.markedfordeath = False
         
     def get_fitness(self):
         self.fitness_rating = 0
-        for j in range(len(self.genecode)):
-            self.fitness_rating *= self.genecode[j]
-        self.fitness_rating = self.fitness_rating ** (1 / len(self.genecode))
+
+        mode = 3
+        if mode == 0:
+            #blue preference
+            for j in range(len(self.genecode)):
+                self.fitness_rating += self.genecode[j]*(j**2)
+        if mode == 1:
+            #dark preference
+            self.fitness_rating = 1000/(1+self.genecode[0]*self.genecode[1]*self.genecode[2])
+        if mode == 2:
+            #blue dislike
+            self.fitness_rating = ((self.genecode[0]**2) + (self.genecode[1]**2))/(1 + self.genecode[2])
+        if mode == 3:
+            #pink!
+            x = -(self.genecode[0])*(self.genecode[0]-400)/40000
+            y = -(self.genecode[0])*(self.genecode[0]-400)/40000
+            self.fitness_rating = (self.genecode[0]**2)*x*y
 
     # actions
 
@@ -216,7 +233,7 @@ def luckybreed(luck_ratio):
     return lucky
 
 
-def mutation(): # Mutates the leftovers
+def mutation(death_ratio): # Mutates the leftovers, srvvl ratio affects how many organisms survive
     mutated = []
     for i in range(len(organism_list)):
         if not organism_list[i].elite and not organism_list[i].child and not organism_list[i].lucky:
@@ -225,25 +242,24 @@ def mutation(): # Mutates the leftovers
                 gene_mutation[j] = randint(0,255)
             organism_list[i].genecode = gene_mutation
             mutated.append(organism_list[i])
+            if randint(1,srvvl_dif) < death_ratio:
+                organism_list[i].markedfordeath = True
     return mutated
 
 
 def generation_pass():
     new_generation = []
 
-    elites = fitness(100)
+    elites = fitness(200)
     crossover_children = crossover(333,elites)
     lucky_ones = luckybreed(100)
-    mutated = mutation()
+    mutated = mutation(200)
 
-    for i in elites:
-        new_generation.append(i)
-    for i in crossover_children:
-        new_generation.append(i)
-    for i in lucky_ones:
-        new_generation.append(i)
-    for i in mutated:
-        new_generation.append(i)
+    for i in range(len(organism_list) - 1, -1, -1):
+        if not organism_list[i].markedfordeath:
+            new_generation.append(organism_list[i])
+        else:
+            organism_list[i].die()
     return new_generation
 
 root = Tk()
@@ -253,7 +269,7 @@ screen.pack()
 ##Updating mode
 create_initial_population(10,3)
 root.update()
-time.sleep(1)
+time.sleep(5)
 while True:
 
     generation_pass()
@@ -261,7 +277,7 @@ while True:
         organism_list[i].update_color()
         organism_list[i].update_tags()
     root.update()
-    time.sleep(1)
+    time.sleep(0.1)
 
 ##Standard print mode
 
