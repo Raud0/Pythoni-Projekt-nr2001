@@ -1,6 +1,7 @@
 from math import exp
 from tkinter import *
 from random import randint, choice
+import time
 
 # Functions
 
@@ -15,10 +16,6 @@ worldWIDTH = 2000
 worldHEIGHT = 2000
 screenWIDTH = 1000
 screenHEIGHT = 800
-
-root = Tk()
-screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
-screen.pack()
 
 # Interaction Constants
 birth_dif = 1000
@@ -49,6 +46,7 @@ class Organism:
         self.HP = float(1000)
         self.genecode = genecode
         self.elite = False
+        self.early = False
         self.child = False
         self.lucky = False
 
@@ -56,16 +54,34 @@ class Organism:
         ENGef = round(32*sigmoid(float((self.energy-1000)/500)))
         HPef = round(self.HP/1000*128)
 
-        r_col = str(hex(HPef + ACef + ENGef - 1)).replace("0x", "").rjust(2, "0")
-        g_col = str(hex(HPef + ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
-        b_col = str(hex(HPef - 2*ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
-        hex_col = "#" + r_col + g_col + b_col
-        self.body = screen.create_oval(self.cx-(w/2), self.cy-(w/2), self.cx+(w/2), self.cy+(w/2), fill=hex_col)
+        r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
+        g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
+        b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
+        self.hex_col = "#" + r_col + g_col + b_col
+        
+##        r_col = str(hex(HPef + ACef + ENGef - 1)).replace("0x", "").rjust(2, "0")
+##        g_col = str(hex(HPef + ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
+##        b_col = str(hex(HPef - 2*ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
+
+        self.body = screen.create_oval(self.cx-(w/2), self.cy-(w/2), self.cx+(w/2), self.cy+(w/2), fill=self.hex_col)
 
         organism_list.append(self)
 
     # evolution functions
+    
+    def update_color(self):
+        r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
+        g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
+        b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
+        self.hex_col = "#" + r_col + g_col + b_col
+        screen.itemconfig(self.body, fill=self.hex_col)
 
+    def update_tags(self):
+        self.elite = False
+        self.early = False
+        self.child = False
+        self.lucky = False
+        
     def get_fitness(self):
         self.fitness_rating = 0
         for j in range(len(self.genecode)):
@@ -125,15 +141,16 @@ def create_initial_population(start_pop, dna_length):
 
         genecode = []
         for j in range(dna_length):
-            genecode.append(randint(1,500))
+            genecode.append(randint(0,255))
 
         Organism(m, e, x, y, w, genecode)
+        organism_list[len(organism_list)-1].early = True
 
     return organism_list
 
 
 def fitness(elite_ratio): # survival_ratio - how many out of a number of srvvl_dif creatures survive
-    elite_number = round(elite_ratio/elite_dif)
+    elite_number = round(elite_ratio/elite_dif*(len(organism_list)))
 
     elites = []
     ordered_list = []
@@ -165,13 +182,13 @@ def crossover(mutation_ratio, elites): # Loob nõ lapsed, võttes kahelt vektril
         side_gene = elites[randint(0, len(elites)-1)].genecode
         for x in range(len(main_gene)):
             if x < len(side_gene):
-                new_gene.append(choice(main_gene[x], side_gene[x]))
+                new_gene.append(choice([main_gene[x], side_gene[x]]))
             else:
                 new_gene.append(main_gene[x])
 
         mutation_number = round(mutation_ratio / mutnt_dif * len(new_gene))
         for i in range(mutation_number): # Mutates a certain amount of the genes
-            new_gene[randint(0, len(new_gene)-1)] = randint(1, 500)
+            new_gene[randint(0, len(new_gene)-1)] = randint(0, 255)
 
         # Creates the organism
 
@@ -205,7 +222,7 @@ def mutation(): # Mutates the leftovers
         if not organism_list[i].elite and not organism_list[i].child and not organism_list[i].lucky:
             gene_mutation = organism_list[i].genecode
             for j in range(len(gene_mutation)):
-                gene_mutation[j] = randint(1,500)
+                gene_mutation[j] = randint(0,255)
             organism_list[i].genecode = gene_mutation
             mutated.append(organism_list[i])
     return mutated
@@ -227,15 +244,32 @@ def generation_pass():
         new_generation.append(i)
     for i in mutated:
         new_generation.append(i)
-
     return new_generation
 
+root = Tk()
+screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
+screen.pack()
 
-create_initial_population(200,3)
-for i in range(len(organism_list)):
-    print(organism_list[i].genecode)
-new_generation = generation_pass()
-for i in range(len(new_generation)):
-    print(new_generation[i].genecode)
+##Updating mode
+create_initial_population(10,3)
+root.update()
+time.sleep(1)
+while True:
 
-root.mainloop()
+    generation_pass()
+    for i in range(len(organism_list)):
+        organism_list[i].update_color()
+        organism_list[i].update_tags()
+    root.update()
+    time.sleep(1)
+
+##Standard print mode
+
+##create_initial_population(200,3)
+##for i in range(len(organism_list)):
+##    print(organism_list[i].genecode)
+##new_generation = generation_pass()
+##for i in range(len(new_generation)):
+##    print(new_generation[i].genecode)
+
+##root.mainloop()
