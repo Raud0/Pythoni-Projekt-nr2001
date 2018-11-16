@@ -1,4 +1,4 @@
-from math import exp, log
+from math import exp, log, sin
 from tkinter import *
 from random import randint, choice
 import time
@@ -88,7 +88,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 3
+        mode = 4
         if mode == 0:
             #blue preference
             for j in range(len(self.genecode)):
@@ -104,6 +104,9 @@ class Organism:
             x = -(self.genecode[0])*(self.genecode[0]-400)/40000
             y = -(self.genecode[0])*(self.genecode[0]-400)/40000
             self.fitness_rating = (self.genecode[0]**2)*x*y
+        if mode == 4:
+            #the divide
+            self.fitness_rating = self.genecode[0]*(1/(1+(self.genecode[2]**2)+(self.genecode[1]**2))) + self.genecode[2]*(1/(1+(self.genecode[0]**2)+(self.genecode[1]**2)))
 
     # actions
 
@@ -250,11 +253,13 @@ def mutation(death_ratio): # Mutates the leftovers, srvvl ratio affects how many
 def generation_pass():
     new_generation = []
 
-    elites = fitness(200)
-    crossover_children = crossover(333,elites)
-    lucky_ones = luckybreed(100)
+##    elites = fitness(200)
+    elites = fitness(200+150*sin((len(organism_list))/20))
+    crossover_children = crossover(200,elites)
+    lucky_ones = luckybreed(50)
+##    mutated = mutation(log((len(organism_list))+1)*50)
+##    mutated = mutation(150+150*sin((len(organism_list))/20))
     mutated = mutation(200)
-
     for i in range(len(organism_list) - 1, -1, -1):
         if not organism_list[i].markedfordeath:
             new_generation.append(organism_list[i])
@@ -267,7 +272,7 @@ screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
 ##Updating mode
-create_initial_population(10,3)
+create_initial_population(100,3)
 root.update()
 time.sleep(5)
 while True:
@@ -277,7 +282,7 @@ while True:
         organism_list[i].update_color()
         organism_list[i].update_tags()
     root.update()
-    time.sleep(0.1)
+    time.sleep(0.05)
 
 ##Standard print mode
 
