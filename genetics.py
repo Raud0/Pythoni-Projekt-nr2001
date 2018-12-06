@@ -88,7 +88,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 4
+        mode = 3
         if mode == 0:
             #blue preference
             for j in range(len(self.genecode)):
@@ -107,7 +107,9 @@ class Organism:
         if mode == 4:
             #the divide
             self.fitness_rating = self.genecode[0]*(1/(1+(self.genecode[2]**2)+(self.genecode[1]**2))) + self.genecode[2]*(1/(1+(self.genecode[0]**2)+(self.genecode[1]**2)))
-
+        if mode == 5:
+            #dark preference
+            self.fitness_rating = self.genecode[1]**2
     # actions
 
     def divide(self, t, ratio):
@@ -254,10 +256,11 @@ def generation_pass():
     new_generation = []
 
 ##    elites = fitness(200)
-    elites = fitness(200+150*sin((len(organism_list))/20))
+##    elites = fitness(200+50*sin((len(organism_list))/20))
+    elites = fitness(log((len(organism_list))+1)*100)
     crossover_children = crossover(200,elites)
     lucky_ones = luckybreed(50)
-##    mutated = mutation(log((len(organism_list))+1)*50)
+##    mutated = mutation(log((len(organism_list))+1)*30)
 ##    mutated = mutation(150+150*sin((len(organism_list))/20))
     mutated = mutation(200)
     for i in range(len(organism_list) - 1, -1, -1):
@@ -272,7 +275,7 @@ screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
 ##Updating mode
-create_initial_population(100,3)
+create_initial_population(5,3)
 root.update()
 time.sleep(5)
 while True:
