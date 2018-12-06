@@ -91,7 +91,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 3
+        mode = 0
         if mode == 0:
             # blue preference
             for j in range(len(self.genecode)):
@@ -155,8 +155,8 @@ def create_initial_population(start_pop, dna_length):
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT - round(w / 2))
+        x = randint(round(w / 2), screenWIDTH*0.200 - round(w / 2))
+        y = randint(round(w / 2), screenHEIGHT*0.200 - round(w / 2))
 
         genecode = []
         for j in range(dna_length):
@@ -190,8 +190,7 @@ def fitness(elite_ratio):  # survival_ratio - how many out of a number of srvvl_
     return elites
 
 
-def crossover(mutation_ratio,
-              elites):  # Loob nõ lapsed, võttes kahelt vektrilt 2 suvalist arvu ja loob 3. suvalise arvu
+def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektrilt 2 suvalist arvu ja loob 3. suvalise arvu
     crossover_children = []
     for i in range(len(elites)):
         new_gene = []
@@ -215,8 +214,8 @@ def crossover(mutation_ratio,
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT - round(w / 2))
+        x = randint(round(w / 2), screenWIDTH*0.200 - round(w / 2))
+        y = randint(round(w / 2), screenHEIGHT*0.200 - round(w / 2))
         Organism(m, e, x, y, w, new_gene)
         organism_list[len(organism_list) - 1].child = True
         crossover_children.append(organism_list[len(organism_list) - 1])
@@ -250,13 +249,14 @@ def mutation(death_ratio):  # Mutates the leftovers, srvvl ratio affects how man
     return mutated
 
 
+
 def generation_pass():
     new_generation = []
 
     elites = fitness(200)
     crossover_children = crossover(200, elites)
     lucky_ones = luckybreed(50)
-    mutated = mutation(200)
+    mutated = mutation(250)
 
     for i in range(len(organism_list) - 1, -1, -1):
         if not organism_list[i].markedfordeath:
@@ -265,6 +265,11 @@ def generation_pass():
             organism_list[i].die()
     return new_generation
 
+def time_pass():
+    for i in range(len(organism_list)):
+        organism_list[i].vx = 5
+        organism_list[i].vy = 5
+        organism_list[i].move()
 
 root = Tk()
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
@@ -274,9 +279,13 @@ screen.pack()
 create_initial_population(10, 3)
 root.update()
 time.sleep(5)
+world_clock = 5
 while True:
-
-    generation_pass()
+    world_clock -= 1
+    if world_clock == 0:
+        generation_pass()
+        world_clock = 5
+    time_pass()
     for i in range(len(organism_list)):
         organism_list[i].update_color()
         organism_list[i].update_tags()
