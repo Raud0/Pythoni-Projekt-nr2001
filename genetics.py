@@ -91,7 +91,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 2
+        mode = 3
         if mode == 0:
             # blue preference
             for j in range(len(self.genecode)):
