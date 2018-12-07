@@ -1,4 +1,4 @@
-from math import exp, log
+from math import exp, log, ceil, floor, fabs, copysign
 from tkinter import *
 from random import randint, choice
 import time
@@ -16,6 +16,8 @@ def sigmoid(x):
 
 worldWIDTH = 2000
 worldHEIGHT = 2000
+chunkWIDTH = 50
+chunkHEIGHT = 50
 screenWIDTH = 1000
 screenHEIGHT = 800
 
@@ -30,6 +32,7 @@ mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
+
 
  # Classes and Functions
 class Organism:
@@ -107,7 +110,7 @@ class Organism:
             y = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
             self.fitness_rating = (self.genecode[0] ** 2) * x * y
 
-    # nervous system
+    # Organism systems
 
     def brain(self):
         if self.energy > 1000:
@@ -118,7 +121,6 @@ class Organism:
     def motor(self):
         self.exist()
         self.move()
-
 
     # actions
 
@@ -306,6 +308,13 @@ def time_pass():
         organism_list[i].brain()
         organism_list[i].motor()
 
+def update_chunks():
+    for y in range(len(world_space)):
+        for x in range(world_space[y]):
+            del world_space[y][x][:]
+
+    for i in range(len(organism_list)):
+        world_space[floor(organism_list[i].cy/chunkHEIGHT)][floor(organism_list[i].cx/chunkWIDTH)].append(organism_list[i])
 
 ##Create Screen
 root = Tk()
@@ -313,6 +322,9 @@ screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
 ##Create World
+
+world_space = [[]*(ceil(worldWIDTH/chunkWIDTH))]*(ceil(worldHEIGHT/chunkHEIGHT))
+
 create_food()
 create_initial_population(10, 3)
 
@@ -320,6 +332,7 @@ root.update()
 time.sleep(1)
 world_clock = 1000
 while True:
+    print(world_clock)
     world_clock -= 1
     if world_clock == 0:
         generation_pass()
