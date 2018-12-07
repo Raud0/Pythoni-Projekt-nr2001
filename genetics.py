@@ -31,7 +31,20 @@ lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
 
-
+# FOOD
+class food:
+    def __init__(self):
+        self.food_value = randint(500,2500)
+        self.x = randint(1000,2000)
+        self.y = randint(1000,2000)
+        w = self.food_value / 25
+        self.body = screen.create_oval(self.x - (w / 2), self.y - (w / 2), self.x + (w / 2), self.y + (w / 2),
+                                       fill="black")
+        
+def create_food():
+    for i in range(200):
+        food()
+   
 # Classes and Functions
 class Organism:
 
@@ -291,6 +304,7 @@ screen.pack()
 
 ##Create World
 create_initial_population(10, 3)
+create_food()
 root.update()
 time.sleep(5)
 world_clock = 5
