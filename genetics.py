@@ -31,21 +31,7 @@ lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
 
-# FOOD
-class food:
-    def __init__(self):
-        self.food_value = randint(500,2500)
-        self.x = randint(1000,2000)
-        self.y = randint(1000,2000)
-        w = self.food_value / 25
-        self.body = screen.create_oval(self.x - (w / 2), self.y - (w / 2), self.x + (w / 2), self.y + (w / 2),
-                                       fill="black")
-        
-def create_food():
-    for i in range(200):
-        food()
-   
-# Classes and Functions
+ # Classes and Functions
 class Organism:
 
     # initialize
@@ -80,7 +66,7 @@ class Organism:
         ##        g_col = str(hex(HPef + ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
         ##        b_col = str(hex(HPef - 2*ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
 
-        self.body = screen.create_oval(self.cx - (w / 2), self.cy - (w / 2), self.cx + (w / 2), self.cy + (w / 2),
+        self.body = screen.create_oval(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill=self.hex_col)
 
         organism_list.append(self)
@@ -127,9 +113,9 @@ class Organism:
         if self.energy > 1000:
             self.divide(1000, 500)
         else:
-            self.accelerate(100, 100, 200)
+            self.accelerate(100, 100, 10)
 
-    def body(self):
+    def motor(self):
         self.exist()
         self.move()
 
@@ -137,16 +123,25 @@ class Organism:
     # actions
 
     def divide(self, t, ratio):
-        m = self.mass * (1 - ratio) * (1 / 2) * (1 - (birth_dif / t)) * (1000 / self.HP)
-        self.mass *= (1 + ratio) * (1 / 2)
-        w = self.width * (1 - ratio) * (1 / (2 ** (1 / 3)))
-        self.width *= (1 + ratio) * (1 / (2 ** (1 / 3)))
-        e = self.energy * (1 - ratio) * (1 / 2) * (1 - (birth_dif / t)) * (1000 / self.HP)
-        self.energy *= (1 + ratio) * (1 / 2)
+
+        efficiency = (self.HP/1000)*(t/birth_dif)
+
+        m = self.mass * (ratio / 1000) * efficiency
+        self.mass *= ((1000 - ratio)/1000)
+        e = self.energy * (ratio / 1000) * efficiency
+        self.energy *= ((1000 - ratio)/1000)
+
+        w = self.width * (ratio / 1000) * (1 / (2 ** (1 / 3)))
+
+        self.width *= ((1000 - ratio)/1000) * (1 / (2 ** (1 / 3)))
         x = self.cx + (self.width + w) / 4
         self.cx += -(self.width + w) / 4
         y = self.cy
-        self.cy += 0
+        self.cy += -(self.width + w) / 4
+        screen.coords(self.body, self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2))
+
+
+
         genecode = self.genecode  # lisa mutateerimisfunktsioon
         Organism(m, e, x, y, w, genecode)
 
@@ -154,26 +149,41 @@ class Organism:
         ex = e * (x / (abs(x) + abs(y)))
         ey = e * (y / (abs(x) + abs(y)))
         self.energy -= e
-        self.vx += (ex / self.mass) * (1 / accel_dif) * (1000 / self.HP)
-        self.vy += (ey / self.mass) * (1 / accel_dif) * (1000 / self.HP)
+
+        self.vx += (ex / self.mass) * (accel_dif/1000) * (1000 / self.HP)
+        self.vy += (ey / self.mass) * (accel_dif/1000) * (1000 / self.HP)
 
     # state resolution
 
     def exist(self):
-        self.energy -= self.mass * exist_dif * (1 / self.AC) * (1000 / self.HP)
+        self.energy -= self.mass * (exist_dif/(1000*100)) * (1 / self.AC) * (1000 / self.HP)
         if self.energy <= 0:
             self.die()
 
     def move(self):
         screen.move(self.body, self.vx, self.vy)
-        self.vx += -(1 / mvmnt_dif)
-        self.vy += -(1 / mvmnt_dif)
+        self.vx += -(mvmnt_dif/(1000*100))*self.vx
+        self.vy += -(mvmnt_dif/(1000*100))*self.vy
 
     def die(self):
         screen.delete(self.body)
         del organism_list[organism_list.index(self)]
         del self
 
+
+class food:
+    def __init__(self):
+        self.food_value = randint(500,2500)
+        self.width = (self.food_value**(2/5))
+        self.x = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
+        self.y = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
+        self.body = screen.create_oval(self.x - (self.width / 2), self.y - (self.width / 2), self.x + (self.width / 2), self.y + (self.width / 2),
+                                       fill="green")
+
+
+def create_food():
+    for i in range(200):
+        food()
 
 def create_initial_population(start_pop, dna_length):
     for creature in range(start_pop):
@@ -252,7 +262,7 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
 def luckybreed(luck_ratio):
     lucky = []
     luck_number = round(luck_ratio / lucky_dif * len(organism_list))
-    while len(lucky) < luck_number + 1:
+    while len(lucky) < luck_number + 1 and len(organism_list) > luck_number:
         i = randint(0, len(organism_list) - 1)
         if not organism_list[i].elite and not organism_list[i].child and not organism_list[i].lucky:
             lucky.append(organism_list[i])
@@ -292,27 +302,28 @@ def generation_pass():
     return new_generation
 
 def time_pass():
-    for i in range(len(organism_list)):
+    for i in range(len(organism_list) - 1, -1, -1):
         organism_list[i].brain()
-        organism_list[i].body()
+        organism_list[i].motor()
 
 
-#Create Screen
+##Create Screen
 root = Tk()
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
 ##Create World
-create_initial_population(10, 3)
 create_food()
+create_initial_population(10, 3)
+
 root.update()
-time.sleep(5)
-world_clock = 5
+time.sleep(1)
+world_clock = 1000
 while True:
     world_clock -= 1
     if world_clock == 0:
         generation_pass()
-        world_clock = 5
+        world_clock = 1000
     time_pass()
     for i in range(len(organism_list)):
         organism_list[i].update_color()
