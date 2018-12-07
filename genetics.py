@@ -108,6 +108,19 @@ class Organism:
             y = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
             self.fitness_rating = (self.genecode[0] ** 2) * x * y
 
+    # nervous system
+
+    def brain(self):
+        if self.energy > 1000:
+            self.divide(1000, 500)
+        else:
+            self.accelerate(100, 100, 200)
+
+    def body(self):
+        self.exist()
+        self.move()
+
+
     # actions
 
     def divide(self, t, ratio):
@@ -267,15 +280,16 @@ def generation_pass():
 
 def time_pass():
     for i in range(len(organism_list)):
-        organism_list[i].vx = 5
-        organism_list[i].vy = 5
-        organism_list[i].move()
+        organism_list[i].brain()
+        organism_list[i].body()
 
+
+#Create Screen
 root = Tk()
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
-##Updating mode
+##Create World
 create_initial_population(10, 3)
 root.update()
 time.sleep(5)

@@ -47,19 +47,20 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="2" />
+          <entry key="project.open.time.5" value="1" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="320" />
+          <entry key="py" value="670" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="320" />
+          <entry key="Python" value="670" />
         </counts>
       </usages-collector>
     </session>
@@ -69,11 +70,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="274" column="61" lean-forward="true" selection-start-line="274" selection-start-column="61" selection-end-line="274" selection-end-column="61" />
+            <state relative-caret-position="370">
+              <caret line="292" column="32" selection-start-line="292" selection-start-column="32" selection-end-line="292" selection-end-column="32" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
-                <marker date="1544094356668" expanded="true" signature="8832:8970" ph="..." />
+                <marker date="1544096805911" expanded="true" signature="3483:3531" ph="..." />
+                <marker date="1544096805911" expanded="true" signature="9062:9185" ph="..." />
               </folding>
             </state>
           </provider>
@@ -104,6 +106,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -115,7 +118,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -279,23 +281,15 @@
     <entry file="file://$PROJECT_DIR$/Geneetiline algoritm.py" />
     <entry file="file://$PROJECT_DIR$/../Geneetiline algoritm.py" />
     <entry file="file://$PROJECT_DIR$/Geneetika.py" />
+    <entry file="file://$PROJECT_DIR$/../genetics.py" />
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="274" column="61" lean-forward="true" selection-start-line="274" selection-start-column="61" selection-end-line="274" selection-end-column="61" />
+        <state relative-caret-position="370">
+          <caret line="292" column="32" selection-start-line="292" selection-start-column="32" selection-end-line="292" selection-end-column="32" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
-            <marker date="1544094356668" expanded="true" signature="8832:8970" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../genetics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="4" selection-end-line="291" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <marker date="1544096805911" expanded="true" signature="3483:3531" ph="..." />
+            <marker date="1544096805911" expanded="true" signature="9062:9185" ph="..." />
           </folding>
         </state>
       </provider>
