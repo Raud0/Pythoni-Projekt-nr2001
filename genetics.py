@@ -183,31 +183,6 @@ class Organism:
 
     # actions
 
-
-
-def divide(self, t, ratio):
-
-        efficiency = (self.HP/1000)*(t/birth_dif)
-
-        m = self.mass * (ratio / 1000) * efficiency
-        self.mass *= ((1000 - ratio)/1000)
-        e = (self.energy * (ratio / 1000) * efficiency)
-        self.energy *= ((1000 - ratio)/1000)
-
-        w = self.width * ((ratio / 1000)**(1/2))
-
-        self.AC = float((self.width / 4) * self.mass / exist_dif)
-
-        self.width *= (((1000 - ratio)/1000)**(1/2))
-        x = self.cx + (self.width + w) / 4
-        self.cx += -(self.width + w) / 4
-        y = self.cy
-        self.cy += -(self.width + w) / 4
-        screen.coords(self.body, self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2))
-
-        genecode = self.genecode  # lisa mutateerimisfunktsioon
-        Organism(m, e, x, y, w, genecode)
-
     def eat(self, energy_ratio, entity):
         self.energy += entity.energy * (1000 / (cnsme_dif*10))
         self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
