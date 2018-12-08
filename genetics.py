@@ -93,7 +93,6 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
-
     # evolution functions
 
     def update_color(self):
@@ -126,7 +125,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 0
+        mode = 3
         if mode == 0:
             # blue preference
             for j in range(len(self.genecode)):
@@ -184,13 +183,15 @@ class Organism:
 
     # actions
 
-    def divide(self, t, ratio):
+
+
+def divide(self, t, ratio):
 
         efficiency = (self.HP/1000)*(t/birth_dif)
 
         m = self.mass * (ratio / 1000) * efficiency
         self.mass *= ((1000 - ratio)/1000)
-        e = self.energy * (ratio / 1000) * efficiency
+        e = (self.energy * (ratio / 1000) * efficiency)
         self.energy *= ((1000 - ratio)/1000)
 
         w = self.width * ((ratio / 1000)**(1/2))
@@ -241,10 +242,7 @@ class Organism:
         del self
         
     def collide(self):
-        x_dif = abs(self.cx - food.body)
-        y_dif = abs(self.cy - food.body)
-        if x_dif <=10 and y_dif <=10:
-            print("Collision")
+       None
 
 class food:
 
@@ -424,18 +422,18 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
     world_space.append(copy.deepcopy(row))
 
 create_food()
-create_initial_population(1, 3)
+create_initial_population(10, 3)
 
 root.update()
 time.sleep(1)
-world_clock = 60
+world_clock = 100
 print("---X---",food_loc_x,"---Y---",food_loc_y)
 while True:
     world_clock -= 1
     update_chunks()
     if world_clock == 0:
         generation_pass()
-        world_clock = 60
+        world_clock = 100
     time_pass()
     for i in range(len(organism_list)):
         organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
