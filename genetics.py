@@ -280,7 +280,6 @@ def create_initial_population(start_pop, dna_length):
         genecode = []
         for j in range(dna_length):
             genecode.append(randint(0, 255))
-
         Organism(m, e, x, y, w, genecode)
         organism_list[len(organism_list) - 1].early = True
 
@@ -411,6 +410,8 @@ root = Tk()
 root.title("Evolutsiooni simulatsioon V0.7")
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
+Populatsiooni_arv = "Unknown"
+pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
 
 ##Create World
 
@@ -427,10 +428,12 @@ create_initial_population(10, 3)
 root.update()
 time.sleep(1)
 world_clock = 100
-print("---X---",food_loc_x,"---Y---",food_loc_y)
 while True:
     world_clock -= 1
     update_chunks()
+    screen.delete(pop_text)
+    Populatsiooni_arv = (len(organism_list))
+    pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
     if world_clock == 0:
         generation_pass()
         world_clock = 100
