@@ -1,4 +1,4 @@
-from math import exp, log, ceil, floor, fabs, copysign
+from math import exp, log, ceil, floor, fabs, copysign, inf
 from tkinter import *
 from random import randint, choice
 import time
@@ -57,6 +57,7 @@ class Organism:
 
         self.AC = float((self.width / 4) * self.mass / exist_dif)
         self.HP = float(1000)
+        self.chunk_range = 1
 
         self.genecode = genecode
 
@@ -66,18 +67,25 @@ class Organism:
         self.lucky = False
         self.markedfordeath = False
 
-        ACef = round(32 * sigmoid(float((self.AC - 60)) / 30))
-        ENGef = round(32 * sigmoid(float((self.energy - 1000) / 500)))
-        HPef = round(self.HP / 1000 * 128)
+        self.colour_mode = 2
+        if self.colour_mode == 0:
+            r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
+        elif self.colour_mode == 1: # seems like a bad idea, too many calculations, but i guess it's fancy
+            self.ACef = round(32 * sigmoid(float((self.AC - 60)) / 30))
+            self.ENGef = round(32 * sigmoid(float((self.energy - 1000) / 500)))
+            self.HPef = round(self.HP / 1000 * 128)
+            r_col = str(hex(self.HPef + self.ACef + self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(self.HPef + self.ACef - 2 * self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(self.HPef - 2 * self.ACef - 2 * self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+        elif self.colour_mode == 2:
+            self.ENGef = round(32 * sigmoid(float((self.energy - 1000) / 500)))
+            r_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
 
-        r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
-        g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
-        b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
         self.hex_col = "#" + r_col + g_col + b_col
-
-        ##        r_col = str(hex(HPef + ACef + ENGef - 1)).replace("0x", "").rjust(2, "0")
-        ##        g_col = str(hex(HPef + ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
-        ##        b_col = str(hex(HPef - 2*ACef - 2*ENGef - 1)).replace("0x", "").rjust(2, "0")
 
         self.body = screen.create_oval(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill=self.hex_col)
@@ -87,9 +95,22 @@ class Organism:
     # evolution functions
 
     def update_color(self):
-        r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
-        g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
-        b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
+        if self.colour_mode == 0:
+            r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(self.genecode[1])).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(self.genecode[2])).replace("0x", "").rjust(2, "0")
+        elif self.colour_mode == 1: # seems like a bad idea
+            self.ACef = round(32 * sigmoid(float((self.AC - 60)) / 30))
+            self.ENGef = round(32 * sigmoid(float((self.energy - 1000) / 500)))
+            self.HPef = round(self.HP / 1000 * 128)
+            r_col = str(hex(self.HPef + self.ACef + self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(self.HPef + self.ACef - 2 * self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(self.HPef - 2 * self.ACef - 2 * self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+        elif self.colour_mode == 2:
+            self.ENGef = round(32 * sigmoid(float((self.energy - 1000) / 500)))
+            r_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            g_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
+            b_col = str(hex(8*self.ENGef - 1)).replace("0x", "").rjust(2, "0")
         self.hex_col = "#" + r_col + g_col + b_col
         screen.itemconfig(self.body, fill=self.hex_col)
 
@@ -123,10 +144,36 @@ class Organism:
     # Organism systems
 
     def brain(self):
-        if self.energy > 1000:
+        if self.energy > 1500:
             self.divide(1000, 400)
         else:
-            self.accelerate(100, 100, 5)
+
+            Default = True
+            if Default:
+                nearby_entities = []
+                bestgoal = self
+                bestdistance = inf
+
+                for y in range(self.y_chunk - self.chunk_range, self.y_chunk + self.chunk_range + 1):
+                    for x in range(self.x_chunk - self.chunk_range, self.x_chunk + self.chunk_range + 1):
+                        for entity in itertools.chain(world_space[y][x]):
+                            if entity != self:
+                                nearby_entities.append(entity)
+
+                for entity in nearby_entities:
+                    if type(entity) == food:
+                        distance = (fabs(self.cx - entity.cx)**2 + fabs(self.cy - entity.cy)**2)**(1/2)
+                        if distance < bestdistance:
+                            bestdistance = distance
+                            bestgoal = entity
+
+                x_dir = bestgoal.cx - self.cx
+                y_dir = bestgoal.cy - self.cy
+
+            if bestdistance <= self.width/2:
+                self.eat(1000, bestgoal)
+            elif x_dir != 0 or y_dir != 0:
+                self.accelerate(x_dir, y_dir, 5)
 
     def motor(self):
         self.exist()
@@ -154,15 +201,19 @@ class Organism:
         self.cy += -(self.width + w) / 4
         screen.coords(self.body, self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2))
 
-
-
         genecode = self.genecode  # lisa mutateerimisfunktsioon
         Organism(m, e, x, y, w, genecode)
+
+    def eat(self, energy_ratio, entity):
+        self.energy += entity.energy * (1000 / (cnsme_dif*10))
+        self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
+        self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
+        entity.die()
 
     def accelerate(self, x, y, e):
         ex = e * (x / (abs(x) + abs(y)))
         ey = e * (y / (abs(x) + abs(y)))
-        self.energy -= e
+        self.energy -= e*(accel_dif/(1000*10))
 
         self.vx += (ex / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
         self.vy += (ey / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
@@ -178,8 +229,8 @@ class Organism:
         self.cx += self.vx
         self.cy += self.vy
         screen.move(self.body, self.vx, self.vy)
-        self.vx += -(mvmnt_dif/(1000*100000))*self.vx
-        self.vy += -(mvmnt_dif/(1000*100000))*self.vy
+        self.vx += -(mvmnt_dif/(1000*1000))*self.vx
+        self.vy += -(mvmnt_dif/(1000*1000))*self.vy
 
     def die(self):
         screen.delete(self.body)
@@ -188,9 +239,11 @@ class Organism:
 
 
 class food:
+
     def __init__(self):
-        self.food_value = randint(500,2500)
-        self.width = (self.food_value**(2/5))
+        self.energy = randint(500, 2500)
+        self.mass = randint(500, 2500)
+        self.width = (self.energy**(2/5))
 
         self.cx = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
         self.cy = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
@@ -200,6 +253,10 @@ class food:
 
         food_list.append(self)
 
+    def die(self):
+        screen.delete(self.body)
+        del food_list[food_list.index(self)]
+        del self
 
 def create_food():
     for i in range(200):
@@ -211,8 +268,8 @@ def create_initial_population(start_pop, dna_length):
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH*0.200 - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT*0.200 - round(w / 2))
+        x = randint(round(w / 2), screenWIDTH - round(w / 2))
+        y = randint(round(w / 2), screenHEIGHT - round(w / 2))
 
         genecode = []
         for j in range(dna_length):
@@ -356,7 +413,7 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
     world_space.append(copy.deepcopy(row))
 
 create_food()
-create_initial_population(10, 3)
+create_initial_population(1, 3)
 
 root.update()
 time.sleep(1)
@@ -368,8 +425,8 @@ while True:
         generation_pass()
         world_clock = 1000
     time_pass()
-    #for i in range(len(organism_list)):
-    #    organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
+    for i in range(len(organism_list)):
+        organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
     #    organism_list[i].update_tags() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
     root.update()
     time.sleep(0.05)
