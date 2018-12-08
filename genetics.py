@@ -433,7 +433,9 @@ root.title("Evolutsiooni simulatsioon V0.7")
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 Populatsiooni_arv = "Unknown"
+Toidu_arv = "Unknown"
 pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
+food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
 
 ##Create World
 
@@ -451,11 +453,16 @@ root.update()
 time.sleep(1)
 world_clock = 100
 while True:
+    if len(food_list) < 20:
+        create_food()
     world_clock -= 1
     update_chunks()
     screen.delete(pop_text)
+    screen.delete(food_text)
     Populatsiooni_arv = (len(organism_list))
+    Toidu_arv = len(food_list)
     pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
+    food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
     if world_clock == 0:
         generation_pass()
         world_clock = 100
