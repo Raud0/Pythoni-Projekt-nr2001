@@ -91,12 +91,12 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
-        print("ENERGIA ENNE",self.energy)
+        print("ENERGIA ENNE-INNITM8",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
-        print("ENERGIA PÄRAST",self.energy)
-        print("MASS ENNE",self.mass)
+        print("ENERGIA PÄRAST-INNITM8",self.energy)
+        print("MASS ENNE-INNITM8",self.mass)
         self.mass = self.mass + (organism_list[0].genecode[1])
-        print("MASS PÄRAST",self.mass)
+        print("MASS PÄRAST-INNITM8",self.mass)
     # evolution functions
 
     def update_color(self):
@@ -209,6 +209,14 @@ class Organism:
         self.mass *= ((1000 - ratio)/1000)
         e = (self.energy * (ratio / 1000) * efficiency)
         self.energy *= ((1000 - ratio)/1000)
+        
+        # Hope I don't break it now
+        print("ENERGIA ENNE-DIVIDE",self.energy)
+        self.energy = self.energy + (organism_list[0].genecode[2])
+        print("ENERGIA PÄRAST-DIVIDE",self.energy)
+        print("MASS ENNE-DIVIDE",self.mass)
+        self.mass = self.mass + (organism_list[0].genecode[1])
+        print("MASS PÄRAST-DIVIDE",self.mass)
 
         w = self.width * ((ratio / 1000)**(1/2))
 
@@ -337,6 +345,14 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
         w = randint(30, 60)
         x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
         y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
+        
+        print("ENERGIA ENNE-CROSSOVER",e)
+        e = e + (organism_list[0].genecode[2])
+        print("ENERGIA PÄRAST-CROSSOVER",e)
+        print("MASS ENNE-CROSSOVER",m)
+        m = m + (organism_list[0].genecode[1])
+        print("MASS PÄRAST-CROSSOVER",m)
+        
         Organism(m, e, x, y, w, new_gene)
         organism_list[len(organism_list) - 1].child = True
         crossover_children.append(organism_list[len(organism_list) - 1])
