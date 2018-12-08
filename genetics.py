@@ -159,8 +159,24 @@ class Organism:
                 bestgoal = self
                 bestdistance = inf
 
-                for y in range(self.y_chunk - self.chunk_range, self.y_chunk + self.chunk_range + 1):
-                    for x in range(self.x_chunk - self.chunk_range, self.x_chunk + self.chunk_range + 1):
+                y_floor = self.y_chunk - self.chunk_range
+                if y_floor < len(world_space):
+                    y_floor = 0
+
+                y_ceil = self.y_chunk + self.chunk_range
+                if y_ceil > len(world_space):
+                    y_ceil = len(world_space)
+
+                x_floor = self.x_chunk - self.chunk_range
+                if x_floor < len(world_space[self.y_chunk]):
+                    x_floor = 0
+
+                x_ceil = self.x_chunk + self.chunk_range
+                if x_ceil > len(world_space[self.y_chunk]):
+                    x_ceil = len(world_space[self.y_chunk])
+
+                for y in range(y_floor, y_ceil+1):
+                    for x in range(x_floor, x_ceil+1):
                         for entity in itertools.chain(world_space[y][x]):
                             if entity != self:
                                 nearby_entities.append(entity)
@@ -405,7 +421,10 @@ def update_chunks():
         x = floor(entity.cx/chunkWIDTH)
         entity.y_chunk = y
         entity.x_chunk = x
-        world_space[y][x].append(entity)
+        if (y > len(world_space)) or (y < 0) or (x > len(world_space[y])) or (x < 0):
+            entity.die()
+        else:
+            world_space[y][x].append(entity)
 
 ##Create Screen
 root = Tk()
@@ -432,12 +451,13 @@ time.sleep(1)
 world_clock = 100
 while True:
     world_clock -= 1
+    print(world_clock)
     update_chunks()
     screen.delete(pop_text)
     Populatsiooni_arv = (len(organism_list))
     pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
     if world_clock == 0:
-        generation_pass()
+        #generation_pass()
         world_clock = 100
     time_pass()
     for i in range(len(organism_list)):
