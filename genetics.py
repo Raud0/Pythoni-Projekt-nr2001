@@ -35,8 +35,6 @@ lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
 food_list = []
-food_loc_x = []
-food_loc_y = []
 
  # Classes and Functions
 class Organism:
@@ -231,9 +229,9 @@ class Organism:
     def move(self):
         self.cx += self.vx
         self.cy += self.vy
-        screen.move(self.body, randint(-20,20), randint(-20,20))
-        self.vx += -(mvmnt_dif/(1000*100000))*self.vx
-        self.vy += -(mvmnt_dif/(1000*100000))*self.vy
+        screen.move(self.body, self.vx, self.vy)
+        self.vx += -(mvmnt_dif/(1000*1000))*self.vx
+        self.vy += -(mvmnt_dif/(1000*1000))*self.vy
 
     def die(self):
         screen.delete(self.body)
@@ -255,8 +253,7 @@ class food:
 
         self.body = screen.create_rectangle(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill="yellow")
-        food_loc_x.append(self.cx)
-        food_loc_y.append(self.cy)
+
         food_list.append(self)
 
     def die(self):
