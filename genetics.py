@@ -91,6 +91,9 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
+        # Energia geen 3
+        # Massi geen 2
+        # ??? geen 1
         print("ENERGIA ENNE-INNITM8",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
         print("ENERGIA PÄRAST-INNITM8",self.energy)
