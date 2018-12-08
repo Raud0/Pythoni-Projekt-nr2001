@@ -408,6 +408,7 @@ def update_chunks():
 
 ##Create Screen
 root = Tk()
+root.title("Evolutsiooni simulatsioon V0.7")
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 
