@@ -91,8 +91,12 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
-        
+        print("ENERGIA ENNE",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
+        print("ENERGIA PÄRAST",self.energy)
+        print("MASS ENNE",self.mass)
+        self.mass = self.mass + (organism_list[0].genecode[1])
+        print("MASS PÄRAST",self.mass)
     # evolution functions
 
     def update_color(self):
