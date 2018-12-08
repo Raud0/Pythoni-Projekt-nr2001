@@ -2,6 +2,8 @@ from math import exp, log, ceil, floor, fabs, copysign
 from tkinter import *
 from random import randint, choice
 import time
+import itertools
+import copy
 
 
 # Functions
@@ -16,8 +18,8 @@ def sigmoid(x):
 
 worldWIDTH = 2000
 worldHEIGHT = 2000
-chunkWIDTH = 50
-chunkHEIGHT = 50
+chunkWIDTH = 100
+chunkHEIGHT = 100
 screenWIDTH = 1000
 screenHEIGHT = 800
 
@@ -32,7 +34,7 @@ mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
-
+food_list = []
 
  # Classes and Functions
 class Organism:
@@ -42,14 +44,22 @@ class Organism:
     def __init__(self, m, e, x, y, w, genecode):
         self.mass = float(m)
         self.energy = float(e)
+
         self.vx = 0
         self.vy = 0
+
         self.cx = x
         self.cy = y
         self.width = w
-        self.AC = float((w / 4) * m / exist_dif)
+
+        self.x_chunk = 0
+        self.y_chunk = 0
+
+        self.AC = float((self.width / 4) * self.mass / exist_dif)
         self.HP = float(1000)
+
         self.genecode = genecode
+
         self.elite = False
         self.early = False
         self.child = False
@@ -114,9 +124,9 @@ class Organism:
 
     def brain(self):
         if self.energy > 1000:
-            self.divide(1000, 500)
+            self.divide(1000, 400)
         else:
-            self.accelerate(100, 100, 10)
+            self.accelerate(100, 100, 5)
 
     def motor(self):
         self.exist()
@@ -133,9 +143,11 @@ class Organism:
         e = self.energy * (ratio / 1000) * efficiency
         self.energy *= ((1000 - ratio)/1000)
 
-        w = self.width * (ratio / 1000) * (1 / (2 ** (1 / 3)))
+        w = self.width * ((ratio / 1000)**(1/2))
 
-        self.width *= ((1000 - ratio)/1000) * (1 / (2 ** (1 / 3)))
+        self.AC = float((self.width / 4) * self.mass / exist_dif)
+
+        self.width *= (((1000 - ratio)/1000)**(1/2))
         x = self.cx + (self.width + w) / 4
         self.cx += -(self.width + w) / 4
         y = self.cy
@@ -152,20 +164,22 @@ class Organism:
         ey = e * (y / (abs(x) + abs(y)))
         self.energy -= e
 
-        self.vx += (ex / self.mass) * (accel_dif/1000) * (1000 / self.HP)
-        self.vy += (ey / self.mass) * (accel_dif/1000) * (1000 / self.HP)
+        self.vx += (ex / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
+        self.vy += (ey / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
 
     # state resolution
 
     def exist(self):
-        self.energy -= self.mass * (exist_dif/(1000*100)) * (1 / self.AC) * (1000 / self.HP)
+        self.energy -= self.mass * (exist_dif/(1000*100000)) * (1 / self.AC) * (1000 / self.HP)
         if self.energy <= 0:
             self.die()
 
     def move(self):
+        self.cx += self.vx
+        self.cy += self.vy
         screen.move(self.body, self.vx, self.vy)
-        self.vx += -(mvmnt_dif/(1000*100))*self.vx
-        self.vy += -(mvmnt_dif/(1000*100))*self.vy
+        self.vx += -(mvmnt_dif/(1000*100000))*self.vx
+        self.vy += -(mvmnt_dif/(1000*100000))*self.vy
 
     def die(self):
         screen.delete(self.body)
@@ -177,10 +191,14 @@ class food:
     def __init__(self):
         self.food_value = randint(500,2500)
         self.width = (self.food_value**(2/5))
-        self.x = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
-        self.y = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
-        self.body = screen.create_oval(self.x - (self.width / 2), self.y - (self.width / 2), self.x + (self.width / 2), self.y + (self.width / 2),
+
+        self.cx = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
+        self.cy = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
+
+        self.body = screen.create_oval(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill="green")
+
+        food_list.append(self)
 
 
 def create_food():
@@ -308,13 +326,20 @@ def time_pass():
         organism_list[i].brain()
         organism_list[i].motor()
 
+
 def update_chunks():
+    global world_space
+
     for y in range(len(world_space)):
-        for x in range(world_space[y]):
+        for x in range(len(world_space[y])):
             del world_space[y][x][:]
 
-    for i in range(len(organism_list)):
-        world_space[floor(organism_list[i].cy/chunkHEIGHT)][floor(organism_list[i].cx/chunkWIDTH)].append(organism_list[i])
+    for entity in itertools.chain(organism_list, food_list):
+        y = floor(entity.cy/chunkHEIGHT)
+        x = floor(entity.cx/chunkWIDTH)
+        entity.y_chunk = y
+        entity.x_chunk = x
+        world_space[y][x].append(entity)
 
 ##Create Screen
 root = Tk()
@@ -323,7 +348,12 @@ screen.pack()
 
 ##Create World
 
-world_space = [[]*(ceil(worldWIDTH/chunkWIDTH))]*(ceil(worldHEIGHT/chunkHEIGHT))
+world_space = []
+for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
+    row = []
+    for x in range(ceil(worldWIDTH/chunkWIDTH)):
+        row.append([])
+    world_space.append(copy.deepcopy(row))
 
 create_food()
 create_initial_population(10, 3)
@@ -332,15 +362,15 @@ root.update()
 time.sleep(1)
 world_clock = 1000
 while True:
-    print(world_clock)
     world_clock -= 1
+    update_chunks()
     if world_clock == 0:
         generation_pass()
         world_clock = 1000
     time_pass()
-    for i in range(len(organism_list)):
-        organism_list[i].update_color()
-        organism_list[i].update_tags()
+    #for i in range(len(organism_list)):
+    #    organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
+    #    organism_list[i].update_tags() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
     root.update()
     time.sleep(0.05)
 
