@@ -91,12 +91,15 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
-        print("ENERGIA ENNE",self.energy)
+        # Energia geen 3
+        # Massi geen 2
+        # ??? geen 1
+        print("ENERGIA ENNE-INNITM8",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
-        print("ENERGIA PÄRAST",self.energy)
-        print("MASS ENNE",self.mass)
+        print("ENERGIA PÄRAST-INNITM8",self.energy)
+        print("MASS ENNE-INNITM8",self.mass)
         self.mass = self.mass + (organism_list[0].genecode[1])
-        print("MASS PÄRAST",self.mass)
+        print("MASS PÄRAST-INNITM8",self.mass)
     # evolution functions
 
     def update_color(self):
@@ -129,7 +132,7 @@ class Organism:
     def get_fitness(self):
         self.fitness_rating = 0
 
-        mode = 3
+        mode = 0
         if mode == 0:
             # blue preference
             for j in range(len(self.genecode)):
@@ -226,6 +229,14 @@ class Organism:
         self.mass *= ((1000 - ratio)/1000)
         e = (self.energy * (ratio / 1000) * efficiency)
         self.energy *= ((1000 - ratio)/1000)
+        
+        # Hope I don't break it now
+        print("ENERGIA ENNE-DIVIDE",self.energy)
+        self.energy = self.energy + (organism_list[0].genecode[2])
+        print("ENERGIA PÄRAST-DIVIDE",self.energy)
+        print("MASS ENNE-DIVIDE",self.mass)
+        self.mass = self.mass + (organism_list[0].genecode[1])
+        print("MASS PÄRAST-DIVIDE",self.mass)
 
         w = self.width * ((ratio / 1000)**(1/2))
 
@@ -354,6 +365,14 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
         w = randint(30, 60)
         x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
         y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
+        
+        print("ENERGIA ENNE-CROSSOVER",e)
+        e = e + (organism_list[0].genecode[2])
+        print("ENERGIA PÄRAST-CROSSOVER",e)
+        print("MASS ENNE-CROSSOVER",m)
+        m = m + (organism_list[0].genecode[1])
+        print("MASS PÄRAST-CROSSOVER",m)
+        
         Organism(m, e, x, y, w, new_gene)
         organism_list[len(organism_list) - 1].child = True
         crossover_children.append(organism_list[len(organism_list) - 1])
@@ -432,7 +451,9 @@ root.title("Evolutsiooni simulatsioon V0.7")
 screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
 screen.pack()
 Populatsiooni_arv = "Unknown"
+Toidu_arv = "Unknown"
 pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
+food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
 
 ##Create World
 
@@ -450,12 +471,17 @@ root.update()
 time.sleep(1)
 world_clock = 100
 while True:
+    if len(food_list) < 20:
+        create_food()
     world_clock -= 1
     print(world_clock)
     update_chunks()
     screen.delete(pop_text)
+    screen.delete(food_text)
     Populatsiooni_arv = (len(organism_list))
+    Toidu_arv = len(food_list)
     pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
+    food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
     if world_clock == 0:
         #generation_pass()
         world_clock = 100
