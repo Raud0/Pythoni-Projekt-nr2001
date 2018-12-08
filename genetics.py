@@ -231,9 +231,9 @@ class Organism:
     def move(self):
         self.cx += self.vx
         self.cy += self.vy
-        screen.move(self.body, randint(-20,20), randint(-20,20))
-        self.vx += -(mvmnt_dif/(1000*100000))*self.vx
-        self.vy += -(mvmnt_dif/(1000*100000))*self.vy
+        screen.move(self.body, self.vx, self.vy)
+        self.vx += -(mvmnt_dif/(1000*1000))*self.vx
+        self.vy += -(mvmnt_dif/(1000*1000))*self.vy
 
     def die(self):
         screen.delete(self.body)
