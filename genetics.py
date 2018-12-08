@@ -35,6 +35,8 @@ lucky_dif = 1000
 srvvl_dif = 1000
 organism_list = []
 food_list = []
+food_loc_x = []
+food_loc_y = []
 
  # Classes and Functions
 class Organism:
@@ -131,6 +133,7 @@ class Organism:
     def motor(self):
         self.exist()
         self.move()
+        #self.collide()
 
     # actions
 
@@ -177,7 +180,7 @@ class Organism:
     def move(self):
         self.cx += self.vx
         self.cy += self.vy
-        screen.move(self.body, self.vx, self.vy)
+        screen.move(self.body, randint(-20,20), randint(-20,20))
         self.vx += -(mvmnt_dif/(1000*100000))*self.vx
         self.vy += -(mvmnt_dif/(1000*100000))*self.vy
 
@@ -185,7 +188,12 @@ class Organism:
         screen.delete(self.body)
         del organism_list[organism_list.index(self)]
         del self
-
+        
+    def collide(self):
+        x_dif = abs(self.cx - food.body)
+        y_dif = abs(self.cy - food.body)
+        if x_dif <=10 and y_dif <=10:
+            print("Collision")
 
 class food:
     def __init__(self):
@@ -195,11 +203,12 @@ class food:
         self.cx = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
         self.cy = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
 
-        self.body = screen.create_oval(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
-                                       fill="green")
-
+        self.body = screen.create_rectangle(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
+                                       fill="yellow")
+        food_loc_x.append(self.cx)
+        food_loc_y.append(self.cy)
         food_list.append(self)
-
+        
 
 def create_food():
     for i in range(200):
@@ -211,8 +220,8 @@ def create_initial_population(start_pop, dna_length):
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH*0.200 - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT*0.200 - round(w / 2))
+        x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
+        y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
 
         genecode = []
         for j in range(dna_length):
@@ -270,8 +279,8 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH*0.200 - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT*0.200 - round(w / 2))
+        x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
+        y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
         Organism(m, e, x, y, w, new_gene)
         organism_list[len(organism_list) - 1].child = True
         crossover_children.append(organism_list[len(organism_list) - 1])
@@ -322,9 +331,11 @@ def generation_pass():
     return new_generation
 
 def time_pass():
+    print("------")
     for i in range(len(organism_list) - 1, -1, -1):
         organism_list[i].brain()
         organism_list[i].motor()
+        print(organism_list[i].genecode)
 
 
 def update_chunks():
@@ -360,17 +371,18 @@ create_initial_population(10, 3)
 
 root.update()
 time.sleep(1)
-world_clock = 1000
+world_clock = 60
+print("---X---",food_loc_x,"---Y---",food_loc_y)
 while True:
     world_clock -= 1
     update_chunks()
     if world_clock == 0:
         generation_pass()
-        world_clock = 1000
+        world_clock = 60
     time_pass()
-    #for i in range(len(organism_list)):
-    #    organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
-    #    organism_list[i].update_tags() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
+    for i in range(len(organism_list)):
+        organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
+        organism_list[i].update_tags() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
     root.update()
     time.sleep(0.05)
 
