@@ -185,6 +185,7 @@ class Organism:
         self.energy += entity.energy * (1000 / (cnsme_dif*10))
         self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
         self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
+        print("eating", entity)
         entity.die()
 
     def accelerate(self, x, y, e):
@@ -381,11 +382,9 @@ def generation_pass():
     return new_generation
 
 def time_pass():
-    print("------")
     for i in range(len(organism_list) - 1, -1, -1):
         organism_list[i].brain()
         organism_list[i].motor()
-        print(organism_list[i].genecode)
 
 
 def update_chunks():
