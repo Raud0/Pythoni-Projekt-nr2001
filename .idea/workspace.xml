@@ -47,23 +47,24 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="9" />
+          <entry key="project.closed" value="13" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.4" value="2" />
-          <entry key="project.open.time.5" value="4" />
+          <entry key="project.open.time.4" value="4" />
+          <entry key="project.open.time.5" value="5" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="2" />
-          <entry key="project.opened" value="10" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="14" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="5726" />
+          <entry key="py" value="23001" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="5726" />
+          <entry key="Python" value="23001" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -83,10 +84,18 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
-              <caret line="426" column="12" selection-start-line="426" selection-start-column="12" selection-end-line="426" selection-end-column="12" />
+            <state relative-caret-position="17">
+              <caret line="281" column="28" selection-start-line="281" selection-start-column="28" selection-end-line="281" selection-end-column="28" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
+                <marker date="1544388013459" expanded="true" signature="198:237" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="257:295" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="312:351" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="370:408" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="10071:10080" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="10202:10876" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="11109:11212" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="11238:11292" ph="..." />
               </folding>
             </state>
           </provider>
@@ -97,6 +106,10 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>print</find>
+      <find>len(world_space</find>
+      <find>tk</find>
+      <find>worldwidth</find>
+      <find>oval</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -327,10 +340,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="426" column="12" selection-start-line="426" selection-start-column="12" selection-end-line="426" selection-end-column="12" />
+        <state relative-caret-position="17">
+          <caret line="281" column="28" selection-start-line="281" selection-start-column="28" selection-end-line="281" selection-end-column="28" />
           <folding>
             <element signature="e#0#59#0" expanded="true" />
+            <marker date="1544388013459" expanded="true" signature="198:237" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="257:295" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="312:351" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="370:408" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="10071:10080" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="10202:10876" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="11109:11212" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="11238:11292" ph="..." />
           </folding>
         </state>
       </provider>
