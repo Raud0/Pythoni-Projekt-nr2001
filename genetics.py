@@ -5,23 +5,34 @@ import time
 import itertools
 import copy
 
+# Input Functions
 
-# Functions
 
+def leftKey(event):
+    screen.xview(SCROLL, -10, UNITS)
+
+def rightKey(event):
+    screen.xview(SCROLL, 10, UNITS)
+
+def upKey(event):
+    screen.yview(SCROLL, -10, UNITS)
+
+def downKey(event):
+    screen.yview(SCROLL, 10, UNITS)
+
+# Mathematical Functions
 
 def sigmoid(x):
     return 1 / (1 + exp(-x))
 
-
 # World Constants
-
 
 worldWIDTH = 2000
 worldHEIGHT = 2000
 chunkWIDTH = 100
 chunkHEIGHT = 100
 screenWIDTH = 1000
-screenHEIGHT = 800
+screenHEIGHT = 1000
 
 # Interaction Constants
 birth_dif = 1000
@@ -36,7 +47,7 @@ srvvl_dif = 1000
 organism_list = []
 food_list = []
 
- # Classes and Functions
+# Classes and Functions
 class Organism:
 
     # initialize
@@ -94,12 +105,8 @@ class Organism:
         # Energia geen 3
         # Massi geen 2
         # ??? geen 1
-        print("ENERGIA ENNE-INNITM8",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
-        print("ENERGIA PÄRAST-INNITM8",self.energy)
-        print("MASS ENNE-INNITM8",self.mass)
         self.mass = self.mass + (organism_list[0].genecode[1])
-        print("MASS PÄRAST-INNITM8",self.mass)
     # evolution functions
 
     def update_color(self):
@@ -162,21 +169,10 @@ class Organism:
                 bestgoal = self
                 bestdistance = inf
 
-                y_floor = self.y_chunk - self.chunk_range
-                if y_floor < len(world_space):
-                    y_floor = 0
-
-                y_ceil = self.y_chunk + self.chunk_range
-                if y_ceil > len(world_space):
-                    y_ceil = len(world_space)
-
-                x_floor = self.x_chunk - self.chunk_range
-                if x_floor < len(world_space[self.y_chunk]):
-                    x_floor = 0
-
-                x_ceil = self.x_chunk + self.chunk_range
-                if x_ceil > len(world_space[self.y_chunk]):
-                    x_ceil = len(world_space[self.y_chunk])
+                y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM-1)
+                y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM-1), 0)
+                x_floor = min(max(self.x_chunk - self.chunk_range, 0), x_chunkNUM-1)
+                x_ceil = max(min(self.x_chunk + self.chunk_range, x_chunkNUM-1), 0)
 
                 for y in range(y_floor, y_ceil+1):
                     for x in range(x_floor, x_ceil+1):
@@ -194,8 +190,9 @@ class Organism:
                 x_dir = bestgoal.cx - self.cx
                 y_dir = bestgoal.cy - self.cy
 
-            if bestdistance <= self.width/2:
-                self.eat(1000, bestgoal)
+            if bestdistance <= ((self.width/2)+(bestgoal.width/2)):
+                if (bestgoal in food_list) or (bestgoal in organism_list):
+                    self.eat(1000, bestgoal)
             elif x_dir != 0 or y_dir != 0:
                 self.accelerate(x_dir, y_dir, 5)
 
@@ -210,7 +207,6 @@ class Organism:
         self.energy += entity.energy * (1000 / (cnsme_dif*10))
         self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
         self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
-        print("eating", entity)
         entity.die()
 
     def accelerate(self, x, y, e):
@@ -231,12 +227,8 @@ class Organism:
         self.energy *= ((1000 - ratio)/1000)
         
         # Hope I don't break it now
-        print("ENERGIA ENNE-DIVIDE",self.energy)
         self.energy = self.energy + (organism_list[0].genecode[2])
-        print("ENERGIA PÄRAST-DIVIDE",self.energy)
-        print("MASS ENNE-DIVIDE",self.mass)
         self.mass = self.mass + (organism_list[0].genecode[1])
-        print("MASS PÄRAST-DIVIDE",self.mass)
 
         w = self.width * ((ratio / 1000)**(1/2))
 
@@ -282,8 +274,8 @@ class food:
         self.mass = randint(500, 2500)
         self.width = (self.energy**(2/5))
 
-        self.cx = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
-        self.cy = randint(round(self.width / 2), screenWIDTH - round(self.width / 2))
+        self.cx = randint(round(self.width / 2), worldWIDTH - round(self.width / 2))
+        self.cy = randint(round(self.width / 2), worldHEIGHT - round(self.width / 2))
 
         self.body = screen.create_rectangle(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill="yellow")
@@ -365,13 +357,9 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
         w = randint(30, 60)
         x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
         y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
-        
-        print("ENERGIA ENNE-CROSSOVER",e)
+
         e = e + (organism_list[0].genecode[2])
-        print("ENERGIA PÄRAST-CROSSOVER",e)
-        print("MASS ENNE-CROSSOVER",m)
         m = m + (organism_list[0].genecode[1])
-        print("MASS PÄRAST-CROSSOVER",m)
         
         Organism(m, e, x, y, w, new_gene)
         organism_list[len(organism_list) - 1].child = True
@@ -431,8 +419,8 @@ def time_pass():
 def update_chunks():
     global world_space
 
-    for y in range(len(world_space)):
-        for x in range(len(world_space[y])):
+    for y in range(y_chunkNUM):
+        for x in range(x_chunkNUM):
             del world_space[y][x][:]
 
     for entity in itertools.chain(organism_list, food_list):
@@ -440,15 +428,25 @@ def update_chunks():
         x = floor(entity.cx/chunkWIDTH)
         entity.y_chunk = y
         entity.x_chunk = x
-        if (y > len(world_space)) or (y < 0) or (x > len(world_space[y])) or (x < 0):
+        if (y > y_chunkNUM-1) or (y < 0) or (x > x_chunkNUM-1) or (x < 0):
             entity.die()
         else:
             world_space[y][x].append(entity)
 
 ##Create Screen
 root = Tk()
+root.resizable(width=FALSE, height=FALSE)
+root.geometry(str(screenWIDTH)+"x"+str(screenHEIGHT))
 root.title("Evolutsiooni simulatsioon V0.7")
-screen = Canvas(root, width=screenWIDTH, height=screenHEIGHT)
+root.bind("<Left>", leftKey)
+root.bind("<Right>", rightKey)
+root.bind("<Up>", upKey)
+root.bind("<Down>", downKey)
+
+screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
+screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT )
+
+
 screen.pack()
 Populatsiooni_arv = "Unknown"
 Toidu_arv = "Unknown"
@@ -458,10 +456,15 @@ food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
 ##Create World
 
 world_space = []
+y_chunkNUM = 0
+x_chunkNUM = 0
 for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
     row = []
+    x_chunkNUM = 0
     for x in range(ceil(worldWIDTH/chunkWIDTH)):
         row.append([])
+        x_chunkNUM += 1
+    y_chunkNUM += 1
     world_space.append(copy.deepcopy(row))
 
 create_food()
@@ -470,25 +473,32 @@ create_initial_population(10, 3)
 root.update()
 time.sleep(1)
 world_clock = 100
+
+#Põhitsükkel
 while True:
-    if len(food_list) < 20:
-        create_food()
+
     world_clock -= 1
-    print(world_clock)
+
     update_chunks()
+
     screen.delete(pop_text)
     screen.delete(food_text)
     Populatsiooni_arv = (len(organism_list))
     Toidu_arv = len(food_list)
     pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
     food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
+
     if world_clock == 0:
         #generation_pass()
         world_clock = 100
+
+    if world_clock % 10:
+        for i in range(len(organism_list)):
+            organism_list[i].update_color()
+            organism_list[i].update_tags()
+
     time_pass()
-    for i in range(len(organism_list)):
-        organism_list[i].update_color() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
-        organism_list[i].update_tags() #ma ei tea kui tihti seda peaks tegema, aga kindlasti mitte iga tsükkel
+
     root.update()
     time.sleep(0.05)
 
