@@ -19,6 +19,7 @@ def upKey(event):
 
 def downKey(event):
     screen.yview(SCROLL, 10, UNITS)
+    
 
 # Mathematical Functions
 
@@ -102,11 +103,12 @@ class Organism:
                                        fill=self.hex_col)
 
         organism_list.append(self)
-        # Energia geen 3
-        # Massi geen 2
-        # ??? geen 1
+        # Geen 3 - Mõjutab olendi enerigiat
+        # Geen 2 - Mõjutab olendi massi
+        # Geen 1 - Mõjutab kui kaugele näevad
         self.energy = self.energy + (organism_list[0].genecode[2])
         self.mass = self.mass + (organism_list[0].genecode[1])
+        self.chunk_range = floor(self.chunk_range + ((organism_list[0].genecode[0]) / 10 ))
     # evolution functions
 
     def update_color(self):
@@ -529,7 +531,7 @@ while True:
     food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
 
     if world_clock == 0:
-        #generation_pass()
+        generation_pass()
         world_clock = 100
 
     if world_clock % 10:
