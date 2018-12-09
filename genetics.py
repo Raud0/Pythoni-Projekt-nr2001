@@ -269,18 +269,56 @@ class Organism:
 
 class food:
 
-    def __init__(self):
-        self.energy = randint(500, 2500)
-        self.mass = randint(500, 2500)
+    def __init__(self, e, m, x, y):
+        self.energy = e
+        self.mass = m
         self.width = (self.energy**(2/5))
 
-        self.cx = randint(round(self.width / 2), worldWIDTH - round(self.width / 2))
-        self.cy = randint(round(self.width / 2), worldHEIGHT - round(self.width / 2))
+        self.cx = x
+        self.cy = y
+
+        self.x_chunk = 0
+        self.y_chunk = 0
+        self.chunk_range = 2
 
         self.body = screen.create_rectangle(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
                                        fill="yellow")
 
         food_list.append(self)
+
+    def brain(self):
+        if self.energy > 1000:
+            self.expand(200)
+        else:
+            self.photosynthesize()
+
+    def motor(self):
+        food_count = 0
+        y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM - 1)
+        y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM - 1), 0)
+        x_floor = min(max(self.x_chunk - self.chunk_range, 0), x_chunkNUM - 1)
+        x_ceil = max(min(self.x_chunk + self.chunk_range, x_chunkNUM - 1), 0)
+
+        for y in range(y_floor, y_ceil + 1):
+            for x in range(x_floor, x_ceil + 1):
+                for entity in itertools.chain(world_space[y][x]):
+                    if type(entity) == food:
+                        food_count += 1
+
+        self.energy += (-1 / 500) * (food_count - 30) * food_count * food_count - 7
+
+    def expand(self, ratio):
+        e = self.energy*(ratio/1000)
+        self.energy *= ((1000 - ratio)/1000)
+        m = self.mass * (ratio / 1000)
+        self.mass *= ((1000 - ratio) / 1000)
+
+        self.width = (self.energy**(2/5))
+        food(e, m, self.cx + randint(-1, 1)*self.width/2, self.cy + randint(-1, 1)*self.width/2)
+
+    def photosynthesize(self):
+        self.energy += 5
+        self.mass += 5
 
     def die(self):
         screen.delete(self.body)
@@ -289,7 +327,7 @@ class food:
 
 def create_food():
     for i in range(200):
-        food()
+        food(randint(50, 1000), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
 
 def create_initial_population(start_pop, dna_length):
     for creature in range(start_pop):
@@ -403,7 +441,7 @@ def generation_pass():
     lucky_ones = luckybreed(50)
     mutated = mutation(250)
 
-    for i in range(len(organism_list) - 1, -1, -1):
+    for i in range(len(organism_list) -1, -1, -1):
         if not organism_list[i].markedfordeath:
             new_generation.append(organism_list[i])
         else:
@@ -411,10 +449,12 @@ def generation_pass():
     return new_generation
 
 def time_pass():
-    for i in range(len(organism_list) - 1, -1, -1):
+    for i in range(len(organism_list) -1, -1, -1):
         organism_list[i].brain()
         organism_list[i].motor()
-
+    for i in range(len(food_list) -1, -1, -1):
+        food_list[i].brain()
+        food_list[i].motor()
 
 def update_chunks():
     global world_space

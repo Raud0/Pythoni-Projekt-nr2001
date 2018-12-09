@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b0f24573-b646-4d8d-80e2-7ce5f1d990f3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/genetics.py" beforeDir="false" afterPath="$PROJECT_DIR$/genetics.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -60,12 +59,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="7394" />
+          <entry key="py" value="23001" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="7394" />
+          <entry key="Python" value="23001" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,12 +85,17 @@
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="17">
-              <caret line="1" column="21" lean-forward="true" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
+              <caret line="281" column="28" selection-start-line="281" selection-start-column="28" selection-end-line="281" selection-end-column="28" />
               <folding>
-                <marker date="1544383745615" expanded="true" signature="198:237" ph="..." />
-                <marker date="1544383745615" expanded="true" signature="257:295" ph="..." />
-                <marker date="1544383745615" expanded="true" signature="312:351" ph="..." />
-                <marker date="1544383745615" expanded="true" signature="370:408" ph="..." />
+                <element signature="e#0#59#0" expanded="true" />
+                <marker date="1544388013459" expanded="true" signature="198:237" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="257:295" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="312:351" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="370:408" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="10071:10080" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="10202:10876" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="11109:11212" ph="..." />
+                <marker date="1544388013459" expanded="true" signature="11238:11292" ph="..." />
               </folding>
             </state>
           </provider>
@@ -105,6 +109,7 @@
       <find>len(world_space</find>
       <find>tk</find>
       <find>worldwidth</find>
+      <find>oval</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -336,12 +341,17 @@
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
-          <caret line="1" column="21" lean-forward="true" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
+          <caret line="281" column="28" selection-start-line="281" selection-start-column="28" selection-end-line="281" selection-end-column="28" />
           <folding>
-            <marker date="1544383745615" expanded="true" signature="198:237" ph="..." />
-            <marker date="1544383745615" expanded="true" signature="257:295" ph="..." />
-            <marker date="1544383745615" expanded="true" signature="312:351" ph="..." />
-            <marker date="1544383745615" expanded="true" signature="370:408" ph="..." />
+            <element signature="e#0#59#0" expanded="true" />
+            <marker date="1544388013459" expanded="true" signature="198:237" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="257:295" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="312:351" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="370:408" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="10071:10080" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="10202:10876" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="11109:11212" ph="..." />
+            <marker date="1544388013459" expanded="true" signature="11238:11292" ph="..." />
           </folding>
         </state>
       </provider>
