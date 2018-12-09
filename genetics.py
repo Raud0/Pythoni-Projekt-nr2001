@@ -326,7 +326,7 @@ class food:
         del self
 
 def create_food():
-    for i in range(200):
+    for i in range(500):
         food(randint(50, 1000), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
 
 def create_initial_population(start_pop, dna_length):
