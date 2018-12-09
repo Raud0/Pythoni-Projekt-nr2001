@@ -470,6 +470,7 @@ create_initial_population(10, 3)
 root.update()
 time.sleep(1)
 world_clock = 100
+
 while True:
     if len(food_list) < 20:
         create_food()
