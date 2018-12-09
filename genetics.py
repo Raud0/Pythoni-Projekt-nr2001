@@ -20,6 +20,12 @@ def upKey(event):
 def downKey(event):
     screen.yview(SCROLL, 10, UNITS)
 
+def priorKey(event):
+    screen.scale("all", 0, 0, 0.8, 0.8)
+
+def nextKey(event):
+    screen.scale("all", 0, 0, 1.25, 1.25)
+
 # Mathematical Functions
 
 def sigmoid(x):
@@ -482,6 +488,8 @@ root.bind("<Left>", leftKey)
 root.bind("<Right>", rightKey)
 root.bind("<Up>", upKey)
 root.bind("<Down>", downKey)
+root.bind("<Prior>", priorKey)
+root.bind("<Next>", nextKey)
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT )
@@ -508,7 +516,7 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
     world_space.append(copy.deepcopy(row))
 
 create_food()
-create_initial_population(10, 3)
+create_initial_population(50, 3)
 
 root.update()
 time.sleep(1)
