@@ -499,16 +499,25 @@ root.bind("<Prior>", priorKey)
 root.bind("<Next>", nextKey)
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
-screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT )
+
+
+Populatsiooni_arv = StringVar()
+Toidu_arv = StringVar()
+timer = StringVar()
+
+
+frame = Frame(root,borderwidth=4,width=1,)
+l1 = Label(frame,text="Populatsioon: ",textvariable=Populatsiooni_arv,width=20,font=("arial",10))
+l2 = Label(frame,text="Toit: ",textvariable=Toidu_arv,width=20,font=("arial",10))
+l3 = Label(frame,text="Aeg",textvariable=timer,width=20,font=("arial",10))
+
+frame.pack()
+l1.pack()
+l2.pack()
+l3.pack()
 
 
 screen.pack()
-Populatsiooni_arv = "Unknown"
-Toidu_arv = "Unknown"
-Aeg = 1000
-pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
-food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
-time_text = screen.create_text(100,50,text="Aeg: "+str(Aeg))
 
 ##Create World
 
@@ -529,6 +538,7 @@ create_initial_population(50, 3)
 
 root.update()
 time.sleep(1)
+Aeg = 1000
 world_clock = Aeg
 
 #Põhitsükkel
@@ -538,14 +548,9 @@ while True:
 
     update_chunks()
 
-    screen.delete(pop_text)
-    screen.delete(food_text)
-    screen.delete(time_text)
-    Populatsiooni_arv = (len(organism_list))
-    Toidu_arv = len(food_list)
-    pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
-    food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
-    time_text = screen.create_text(100,50, text="Aeg: " + str(world_clock))
+    Populatsiooni_arv.set("Populatsioon: "+str((len(organism_list))))
+    Toidu_arv.set("Toit: "+str((len(food_list))))
+    timer.set("Aeg: "+str(world_clock))
 
     if world_clock == 0:
         generation_pass()
