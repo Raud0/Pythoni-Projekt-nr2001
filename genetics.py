@@ -512,9 +512,9 @@ l2 = Label(frame,text="Toit: ",textvariable=Toidu_arv,width=20,font=("arial",10)
 l3 = Label(frame,text="Aeg",textvariable=timer,width=20,font=("arial",10))
 
 frame.pack()
-l1.pack()
-l2.pack()
-l3.pack()
+l1.pack(side="left")
+l2.pack(side="left")
+l3.pack(side="right")
 
 
 screen.pack()
