@@ -569,6 +569,18 @@ while True:
     Populatsiooni_arv.set("Populatsioon: "+str((len(organism_list))))
     Toidu_arv.set("Toit: "+str((len(food_list))))
     timer.set("Aeg: "+str(world_clock))
+    if len(organism_list) < 20:
+        l1.config(fg="red")
+    else:
+        l1.config(fg="green")
+    if len(food_list) < 200:
+        l2.config(fg="red")
+    else:
+        l2.config(fg="green")
+    if (world_clock) < 100:
+        l3.config(fg="red")
+    else:
+        l3.config(fg="green")
 
     if world_clock == 0:
         generation_pass()
