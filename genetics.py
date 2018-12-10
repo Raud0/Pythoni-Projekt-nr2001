@@ -120,7 +120,7 @@ class Organism:
         # Geen 1 - Mõjutab kui kaugele näevad
         self.energy = self.energy + (organism_list[0].genecode[2])
         self.mass = self.mass + (organism_list[0].genecode[1])
-        self.chunk_range = floor(self.chunk_range + ((organism_list[0].genecode[0]) / 10 ))
+        #self.chunk_range = floor(self.chunk_range + ((organism_list[0].genecode[0]) / 10 )) liiga suur, nägemiskaugus on piiratud selle jaoks, et organismi liiga palju küsimisi ei teeks enda ümber, sest see mõjutab performance'it kõvasti
     # evolution functions
 
     def update_color(self):
@@ -348,8 +348,8 @@ def create_initial_population(start_pop, dna_length):
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
+        x = randint(round(w / 2), worldWIDTH - round(w / 2))
+        y = randint(round(w / 2), worldHEIGHT - round(w / 2))
 
         genecode = []
         for j in range(dna_length):
@@ -505,8 +505,10 @@ screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT )
 screen.pack()
 Populatsiooni_arv = "Unknown"
 Toidu_arv = "Unknown"
+Aeg = 1000
 pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
 food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
+time_text = screen.create_text(100,50,text="Aeg: "+str(Aeg))
 
 ##Create World
 
@@ -527,7 +529,7 @@ create_initial_population(50, 3)
 
 root.update()
 time.sleep(1)
-world_clock = 100
+world_clock = Aeg
 
 #Põhitsükkel
 while True:
@@ -538,14 +540,16 @@ while True:
 
     screen.delete(pop_text)
     screen.delete(food_text)
+    screen.delete(time_text)
     Populatsiooni_arv = (len(organism_list))
     Toidu_arv = len(food_list)
     pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
     food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
+    time_text = screen.create_text(100,50, text="Aeg: " + str(world_clock))
 
     if world_clock == 0:
         generation_pass()
-        world_clock = 100
+        world_clock = Aeg
 
     if world_clock % 10:
         for i in range(len(organism_list)):
@@ -555,7 +559,7 @@ while True:
     time_pass()
 
     root.update()
-    time.sleep(0.05)
+    time.sleep(0.01)
 
 ##Standard print mode
 

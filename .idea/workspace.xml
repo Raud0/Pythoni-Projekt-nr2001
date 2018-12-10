@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b0f24573-b646-4d8d-80e2-7ce5f1d990f3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/genetics.py" beforeDir="false" afterPath="$PROJECT_DIR$/genetics.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,24 +47,24 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="15" />
+          <entry key="project.closed" value="16" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.4" value="4" />
-          <entry key="project.open.time.5" value="5" />
+          <entry key="project.open.time.5" value="6" />
           <entry key="project.open.time.6" value="2" />
           <entry key="project.open.time.7" value="2" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="15" />
+          <entry key="project.opened" value="16" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="23488" />
+          <entry key="py" value="23796" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="23488" />
+          <entry key="Python" value="23796" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,17 +84,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="317" lean-forward="true" selection-start-line="317" selection-end-line="317" />
+            <state relative-caret-position="577">
+              <caret line="561" column="19" selection-start-line="561" selection-start-column="19" selection-end-line="561" selection-end-column="19" />
               <folding>
                 <element signature="e#0#59#0" expanded="true" />
-                <marker date="1544430993884" expanded="true" signature="198:237" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="257:295" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="312:351" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="530:590" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="652:712" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="10409:10418" ph="..." />
-                <marker date="1544430993884" expanded="true" signature="10540:11214" ph="..." />
+                <marker date="1544435799043" expanded="true" signature="198:237" ph="..." />
+                <marker date="1544435799043" expanded="true" signature="257:295" ph="..." />
+                <marker date="1544435799043" expanded="true" signature="312:351" ph="..." />
               </folding>
             </state>
           </provider>
@@ -110,6 +105,7 @@
       <find>tk</find>
       <find>worldwidth</find>
       <find>oval</find>
+      <find>create_food</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -126,10 +122,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1181" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="974" />
-    <option name="height" value="1080" />
+    <option name="width" value="1936" />
+    <option name="height" value="1096" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -281,7 +277,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.057955742" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -339,17 +335,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="317" lean-forward="true" selection-start-line="317" selection-end-line="317" />
+        <state relative-caret-position="577">
+          <caret line="561" column="19" selection-start-line="561" selection-start-column="19" selection-end-line="561" selection-end-column="19" />
           <folding>
             <element signature="e#0#59#0" expanded="true" />
-            <marker date="1544430993884" expanded="true" signature="198:237" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="257:295" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="312:351" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="530:590" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="652:712" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="10409:10418" ph="..." />
-            <marker date="1544430993884" expanded="true" signature="10540:11214" ph="..." />
+            <marker date="1544435799043" expanded="true" signature="198:237" ph="..." />
+            <marker date="1544435799043" expanded="true" signature="257:295" ph="..." />
+            <marker date="1544435799043" expanded="true" signature="312:351" ph="..." />
           </folding>
         </state>
       </provider>
