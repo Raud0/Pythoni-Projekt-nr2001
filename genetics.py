@@ -344,7 +344,7 @@ class food:
         del self
 
 def create_food():
-    for i in range(x_chunkNUM*y_chunkNUM*2):
+    for i in range(max(x_chunkNUM*y_chunkNUM*2-len(food_list), 1)):
         food(randint(50, 800), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
 
 def create_initial_population(start_pop, dna_length):
@@ -453,6 +453,8 @@ def mutation(death_ratio):  # Mutates the leftovers, srvvl ratio affects how man
 
 def generation_pass():
     new_generation = []
+
+    create_food()
 
     elites = fitness(200)
     crossover_children = crossover(200, elites)
