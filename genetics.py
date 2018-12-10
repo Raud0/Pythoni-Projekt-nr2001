@@ -555,6 +555,14 @@ while True:
         l1.config(fg="red")
     else:
         l1.config(fg="green")
+    if len(food_list) < 200:
+        l2.config(fg="red")
+    else:
+        l2.config(fg="green")
+    if (world_clock) < 100:
+        l3.config(fg="red")
+    else:
+        l3.config(fg="green")
 
     if world_clock == 0:
         generation_pass()
