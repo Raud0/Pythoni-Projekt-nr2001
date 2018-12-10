@@ -38,12 +38,12 @@ def returnKey(event):
 scale = 1
 a_scale_mult = 0.8
 b_scale_mult = 1/a_scale_mult
-def priorKey(event):
+def nextKey(event):
     global scale
     scale *= a_scale_mult
     screen.scale("all", 0, 0, a_scale_mult, a_scale_mult)
 
-def nextKey(event):
+def priorKey(event):
     global scale
     scale *= b_scale_mult
     screen.scale("all", 0, 0, b_scale_mult, b_scale_mult)
@@ -513,8 +513,8 @@ root.bind("<Left>", leftKey)
 root.bind("<Right>", rightKey)
 root.bind("<Up>", upKey)
 root.bind("<Down>", downKey)
-root.bind("<Prior>", priorKey)
 root.bind("<Next>", nextKey)
+root.bind("<Prior>", priorKey)
 root.bind("<BackSpace>", backspaceKey)
 root.bind("<Return>", returnKey)
 
@@ -525,7 +525,7 @@ Toidu_arv = StringVar()
 timer = StringVar()
 
 status_bar = Frame(root, height=30, relief=SUNKEN, bd=1)
-status_bar.pack(side=BOTTOM, fill=X)
+status_bar.pack(side=TOP, fill=X)
 
 l1 = Label(status_bar, text="Populatsioon: ",textvariable=Populatsiooni_arv,width=20,font=("arial",10))
 l2 = Label(status_bar, text="Toit: ",textvariable=Toidu_arv,width=20,font=("arial",10))
