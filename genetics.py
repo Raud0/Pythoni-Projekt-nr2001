@@ -406,8 +406,8 @@ def crossover(mutation_ratio, elites):  # Loob nõ lapsed, võttes kahelt vektri
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), screenWIDTH*0.600 - round(w / 2))
-        y = randint(round(w / 2), screenHEIGHT*0.600 - round(w / 2))
+        x = randint(round(w / 2), worldWIDTH - round(w / 2))
+        y = randint(round(w / 2), worldHEIGHT - round(w / 2))
 
         e = e + (organism_list[0].genecode[2])
         m = m + (organism_list[0].genecode[1])
@@ -513,25 +513,24 @@ root.bind("<Return>", returnKey)
 
 ##Create Frame
 
+Populatsiooni_arv = StringVar()
+Toidu_arv = StringVar()
+timer = StringVar()
+
 status_bar = Frame(root, height=30, relief=SUNKEN, bd=1)
 status_bar.pack(side=BOTTOM, fill=X)
 
-Populatsiooni_arv = "Unknown"
-Toidu_arv = "Unknown"
-Aeg = 1000
-world_clock = Aeg
-pop_text = Label(status_bar, text="Populatsioon: "+str(Populatsiooni_arv))
-food_text = Label(status_bar, text="Toit: "+str(Toidu_arv))
-time_text = Label(status_bar, text="Aeg: "+str(world_clock))
-pop_text.pack(side=LEFT)
-food_text.pack(side=LEFT)
-time_text.pack(side=RIGHT)
+l1 = Label(status_bar, text="Populatsioon: ",textvariable=Populatsiooni_arv,width=20,font=("arial",10))
+l2 = Label(status_bar, text="Toit: ",textvariable=Toidu_arv,width=20,font=("arial",10))
+l3 = Label(status_bar,text="Aeg",textvariable=timer,width=20,font=("arial",10))
+l1.pack(side=LEFT)
+l2.pack(side=LEFT)
+l3.pack(side=RIGHT)
 
 #Create Screen
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
-
 screen.pack()
 
 ##Create World
@@ -556,20 +555,20 @@ create_food()
 create_initial_population(50, 3)
 
 #Main Cycle
+
 root.update()
 time.sleep(1)
 world_speed = 0.05
+Aeg = 1000
+world_clock = Aeg
 while True:
 
     world_clock -= 1
 
     update_chunks()
-
-    Populatsiooni_arv = (len(organism_list))
-    Toidu_arv = len(food_list)
-    pop_text.config(text="Populatsioon: " + str(Populatsiooni_arv))
-    food_text.config(text="Toit: " + str(Toidu_arv))
-    time_text.config(text="Aeg: " + str(world_clock))
+    Populatsiooni_arv.set("Populatsioon: "+str((len(organism_list))))
+    Toidu_arv.set("Toit: "+str((len(food_list))))
+    timer.set("Aeg: "+str(world_clock))
 
     if world_clock == 0:
         generation_pass()
