@@ -72,6 +72,7 @@ elite_dif = 1000
 mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
+union_dif = 2000
 sunlight = 2.5
 organism_list = []
 food_list = []
@@ -298,7 +299,7 @@ class Organism:
 
 class food:
 
-    def __init__(self, e, m, x, y):
+    def __init__(self, e, m, x, y, tree_level):
         self.energy = e
         self.mass = m
         self.width = (self.energy**(2/5))
@@ -310,20 +311,56 @@ class food:
         self.y_chunk = 0
         self.chunk_range = 2
 
-        self.body = screen.create_rectangle((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill="yellow")
+        self.markedfordeath = False
+        self.tree_level = tree_level
+        self.expansionlimit = 1000 + 500*(self.tree_level**2)
+
+        r_col = str(hex(min(127+32*tree_level,255))).replace("0x", "").rjust(2, "0")
+        g_col = str(hex(max(255-32*tree_level,0))).replace("0x", "").rjust(2, "0")
+        b_col = str(hex(63)).replace("0x", "").rjust(2, "0")
+        self.hex_col = "#" + r_col + g_col + b_col
+
+        self.body = screen.create_rectangle((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill=self.hex_col)
 
         food_list.append(self)
 
     def brain(self):
-        if self.energy > 1000:
+
+        if self.energy > self.expansionlimit:
             self.expand(200)
         else:
             self.photosynthesize()
 
     def motor(self):
         chunk_fertility = world_space_fertility[self.y_chunk][self.x_chunk]
-        self.energy += chunk_fertility
-        self.mass += chunk_fertility
+
+        if chunk_fertility > 5:
+            plants = []
+            for plant in world_space[self.y_chunk][self.x_chunk]:
+                if type(plant) == food:
+                    if plant != self and not plant.markedfordeath and plant.tree_level == self.tree_level:
+                        distance = min(fabs(plant.cx - self.cx), fabs(plant.cy - self.cy)) - plant.width/2
+                        if distance < self.width/2:
+                            plants.append(plant)
+
+            if len(plants) > 4:
+                energy = self.energy
+                mass = self.mass
+                while len(plants) > 5:
+                    del plants[randint(0,len(plants)-1)]
+                for plant in plants:
+                    energy += plant.energy
+                    mass += plant.mass
+                    plant.markedfordeath = True
+
+                food(energy*(1000/union_dif), mass*(1000/union_dif), self.cx, self.cy, self.tree_level+1)
+                self.markefordeath = True
+
+        else:
+            self.energy += chunk_fertility
+            self.mass += chunk_fertility
+            if self.energy < 10:
+                self.markefordeath = True
 
     def expand(self, ratio):
         e = self.energy*(ratio/1000)
@@ -332,7 +369,7 @@ class food:
         self.mass *= ((1000 - ratio) / 1000)
 
         self.width = (self.energy**(2/5))
-        food(e, m, (self.cx + randint(-1, 1)*self.width/2), (self.cy + randint(-1, 1)*self.width/2))
+        food(e, m, (self.cx + randint(-1, 1)*self.width/2), (self.cy + randint(-1, 1)*self.width/2), self.tree_level)
 
     def photosynthesize(self):
         self.energy += sunlight
@@ -345,7 +382,7 @@ class food:
 
 def create_food():
     for i in range(max(x_chunkNUM*y_chunkNUM*2-len(food_list), 1)):
-        food(randint(50, 800), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
+        food(randint(50, 800), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50), 0)
 
 def create_initial_population(start_pop, dna_length):
     for creature in range(start_pop):
@@ -475,6 +512,9 @@ def time_pass():
     for i in range(len(food_list) -1, -1, -1):
         food_list[i].brain()
         food_list[i].motor()
+    for i in range(len(food_list) -1, -1, -1):
+        if food_list[i].markedfordeath:
+            food_list[i].die()
 
 def update_chunks():
     global world_space
