@@ -24,10 +24,15 @@ def backspaceKey(event):
     global world_speed
     if world_speed > 0.001:
         world_speed -= 0.001
+    else:
+        world_speed = 0
 
 def returnKey(event):
     global  world_speed
-    world_speed += 0.001
+    if world_speed < 0.001:
+        world_speed = 0.001
+    else:
+        world_speed += 0.001
 
 
 scale = 1
