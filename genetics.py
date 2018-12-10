@@ -1,4 +1,4 @@
-from math import exp, log, ceil, floor, fabs, copysign, inf
+from math import exp, log, ceil, floor, fabs, copysign, inf, sin
 from tkinter import *
 from random import randint, choice
 import time
@@ -518,6 +518,17 @@ root.bind("<Prior>", priorKey)
 root.bind("<BackSpace>", backspaceKey)
 root.bind("<Return>", returnKey)
 
+## World Objects
+def river():
+    x_kasv = 20.1
+    x_tegur = 0.10
+    y_amp = 80
+    river_xy=[]
+    for x in range(200):
+        river_xy.append(x*x_kasv)
+        river_xy.append(int(sin(x*x_tegur) * y_amp) + 2500)
+    return river_xy
+
 ##Create Frame
 
 Populatsiooni_arv = StringVar()
@@ -538,6 +549,7 @@ l3.pack(side=RIGHT)
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
+jõgi = screen.create_line(river(),fill="blue",width=10)
 screen.pack()
 
 ##Create World
@@ -592,7 +604,7 @@ while True:
     if world_clock == 0:
         generation_pass()
         world_clock = Aeg
-
+    #Leiab need objektid mis on jõe peal #jõgi = screen.find_overlapping(screen.coords(jõgi)[0],screen.bbox(jõgi)[1],screen.bbox(jõgi)[2],screen.bbox(jõgi)[3])
     if world_clock % 10:
         for i in range(len(organism_list)):
             organism_list[i].update_color()
