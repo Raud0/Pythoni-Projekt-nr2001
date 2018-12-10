@@ -19,7 +19,16 @@ def upKey(event):
 
 def downKey(event):
     screen.yview(SCROLL, 10, UNITS)
-    
+
+def backspaceKey(event):
+    global world_speed
+    if world_speed > 0.001:
+        world_speed -= 0.001
+
+def returnKey(event):
+    global  world_speed
+    world_speed += 0.001
+
 
 scale = 1
 a_scale_mult = 0.8
@@ -41,8 +50,8 @@ def sigmoid(x):
 
 # World Constants
 
-worldWIDTH = 2000
-worldHEIGHT = 2000
+worldWIDTH = 4000
+worldHEIGHT = 4000
 chunkWIDTH = 100
 chunkHEIGHT = 100
 screenWIDTH = 1000
@@ -58,6 +67,7 @@ elite_dif = 1000
 mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
+sunlight = 2.5
 organism_list = []
 food_list = []
 
@@ -306,19 +316,9 @@ class food:
             self.photosynthesize()
 
     def motor(self):
-        food_count = 0
-        y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM - 1)
-        y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM - 1), 0)
-        x_floor = min(max(self.x_chunk - self.chunk_range, 0), x_chunkNUM - 1)
-        x_ceil = max(min(self.x_chunk + self.chunk_range, x_chunkNUM - 1), 0)
-
-        for y in range(y_floor, y_ceil + 1):
-            for x in range(x_floor, x_ceil + 1):
-                for entity in itertools.chain(world_space[y][x]):
-                    if type(entity) == food:
-                        food_count += 1
-
-        self.energy += (-1 / 500) * (food_count - 30) * food_count * food_count - 7
+        chunk_fertility = world_space_fertility[self.y_chunk][self.x_chunk]
+        self.energy += chunk_fertility
+        self.mass += chunk_fertility
 
     def expand(self, ratio):
         e = self.energy*(ratio/1000)
@@ -327,11 +327,11 @@ class food:
         self.mass *= ((1000 - ratio) / 1000)
 
         self.width = (self.energy**(2/5))
-        food(e, m, (self.cx + randint(-1, 1)*self.width/2)*scale, (self.cy + randint(-1, 1)*self.width/2)*scale)
+        food(e, m, (self.cx + randint(-1, 1)*self.width/2), (self.cy + randint(-1, 1)*self.width/2))
 
     def photosynthesize(self):
-        self.energy += 5
-        self.mass += 5
+        self.energy += sunlight
+        self.mass += sunlight
 
     def die(self):
         screen.delete(self.body)
@@ -339,8 +339,8 @@ class food:
         del self
 
 def create_food():
-    for i in range(500):
-        food(randint(50, 1000), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
+    for i in range(x_chunkNUM*y_chunkNUM*2):
+        food(randint(50, 800), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50))
 
 def create_initial_population(start_pop, dna_length):
     for creature in range(start_pop):
@@ -475,6 +475,7 @@ def update_chunks():
     for y in range(y_chunkNUM):
         for x in range(x_chunkNUM):
             del world_space[y][x][:]
+            world_space_fertility[y][x] = float(0)
 
     for entity in itertools.chain(organism_list, food_list):
         y = floor(entity.cy/chunkHEIGHT)
@@ -485,30 +486,53 @@ def update_chunks():
             entity.die()
         else:
             world_space[y][x].append(entity)
+            if type(entity) == food:
+                world_space_fertility[y][x] += 1
 
-##Create Screen
+    for y in range(y_chunkNUM):
+        for x in range(x_chunkNUM):
+            count = float(world_space_fertility[y][x])
+            world_space_fertility[y][x] = -(count-10)*(count-20)*log(count+4)*(1/30)+5
+
+##Create Window
+
 root = Tk()
+
 root.resizable(width=FALSE, height=FALSE)
 root.geometry(str(screenWIDTH)+"x"+str(screenHEIGHT))
 root.title("Evolutsiooni simulatsioon V0.7")
+
 root.bind("<Left>", leftKey)
 root.bind("<Right>", rightKey)
 root.bind("<Up>", upKey)
 root.bind("<Down>", downKey)
 root.bind("<Prior>", priorKey)
 root.bind("<Next>", nextKey)
+root.bind("<BackSpace>", backspaceKey)
+root.bind("<Return>", returnKey)
 
-screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
-screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT )
+##Create Frame
 
+status_bar = Frame(root, height=30, relief=SUNKEN, bd=1)
+status_bar.pack(side=BOTTOM, fill=X)
 
-screen.pack()
 Populatsiooni_arv = "Unknown"
 Toidu_arv = "Unknown"
 Aeg = 1000
-pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
-food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
-time_text = screen.create_text(100,50,text="Aeg: "+str(Aeg))
+world_clock = Aeg
+pop_text = Label(status_bar, text="Populatsioon: "+str(Populatsiooni_arv))
+food_text = Label(status_bar, text="Toit: "+str(Toidu_arv))
+time_text = Label(status_bar, text="Aeg: "+str(world_clock))
+pop_text.pack(side=LEFT)
+food_text.pack(side=LEFT)
+time_text.pack(side=RIGHT)
+
+#Create Screen
+
+screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
+screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
+
+screen.pack()
 
 ##Create World
 
@@ -524,28 +548,28 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
     y_chunkNUM += 1
     world_space.append(copy.deepcopy(row))
 
+world_space_fertility = copy.deepcopy(world_space)
+
+##Initialize Entities
+
 create_food()
 create_initial_population(50, 3)
 
+#Main Cycle
 root.update()
 time.sleep(1)
-world_clock = Aeg
-
-#Põhitsükkel
+world_speed = 0.05
 while True:
 
     world_clock -= 1
 
     update_chunks()
 
-    screen.delete(pop_text)
-    screen.delete(food_text)
-    screen.delete(time_text)
     Populatsiooni_arv = (len(organism_list))
     Toidu_arv = len(food_list)
-    pop_text = screen.create_text(100,10,text="Populatsioon: "+str(Populatsiooni_arv))
-    food_text = screen.create_text(100,30,text="Toit: "+str(Toidu_arv))
-    time_text = screen.create_text(100,50, text="Aeg: " + str(world_clock))
+    pop_text.config(text="Populatsioon: " + str(Populatsiooni_arv))
+    food_text.config(text="Toit: " + str(Toidu_arv))
+    time_text.config(text="Aeg: " + str(world_clock))
 
     if world_clock == 0:
         generation_pass()
@@ -559,7 +583,7 @@ while True:
     time_pass()
 
     root.update()
-    time.sleep(0.01)
+    time.sleep(world_speed)
 
 ##Standard print mode
 
