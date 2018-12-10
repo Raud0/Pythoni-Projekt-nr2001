@@ -20,11 +20,18 @@ def upKey(event):
 def downKey(event):
     screen.yview(SCROLL, 10, UNITS)
 
+scale = 1
+a_scale_mult = 0.8
+b_scale_mult = 1/a_scale_mult
 def priorKey(event):
-    screen.scale("all", 0, 0, 0.8, 0.8)
+    global scale
+    scale *= a_scale_mult
+    screen.scale("all", 0, 0, a_scale_mult, a_scale_mult)
 
 def nextKey(event):
-    screen.scale("all", 0, 0, 1.25, 1.25)
+    global scale
+    scale *= b_scale_mult
+    screen.scale("all", 0, 0, b_scale_mult, b_scale_mult)
 
 # Mathematical Functions
 
@@ -104,8 +111,7 @@ class Organism:
 
         self.hex_col = "#" + r_col + g_col + b_col
 
-        self.body = screen.create_oval(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
-                                       fill=self.hex_col)
+        self.body = screen.create_oval((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill=self.hex_col)
 
         organism_list.append(self)
         # Energia geen 3
@@ -245,7 +251,7 @@ class Organism:
         self.cx += -(self.width + w) / 4
         y = self.cy
         self.cy += -(self.width + w) / 4
-        screen.coords(self.body, self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2))
+        screen.coords(self.body, (self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale)
 
         genecode = self.genecode  # lisa mutateerimisfunktsioon
         Organism(m, e, x, y, w, genecode)
@@ -261,7 +267,7 @@ class Organism:
     def move(self):
         self.cx += self.vx
         self.cy += self.vy
-        screen.move(self.body, self.vx, self.vy)
+        screen.move(self.body, (self.vx)*scale, (self.vy)*scale)
         self.vx += -(mvmnt_dif/(1000*1000))*self.vx
         self.vy += -(mvmnt_dif/(1000*1000))*self.vy
 
@@ -287,8 +293,7 @@ class food:
         self.y_chunk = 0
         self.chunk_range = 2
 
-        self.body = screen.create_rectangle(self.cx - (self.width / 2), self.cy - (self.width / 2), self.cx + (self.width / 2), self.cy + (self.width / 2),
-                                       fill="yellow")
+        self.body = screen.create_rectangle((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill="yellow")
 
         food_list.append(self)
 
@@ -320,7 +325,7 @@ class food:
         self.mass *= ((1000 - ratio) / 1000)
 
         self.width = (self.energy**(2/5))
-        food(e, m, self.cx + randint(-1, 1)*self.width/2, self.cy + randint(-1, 1)*self.width/2)
+        food(e, m, (self.cx + randint(-1, 1)*self.width/2)*scale, (self.cy + randint(-1, 1)*self.width/2)*scale)
 
     def photosynthesize(self):
         self.energy += 5
