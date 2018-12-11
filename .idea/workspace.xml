@@ -48,24 +48,24 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="19" />
+          <entry key="project.closed" value="21" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.4" value="6" />
+          <entry key="project.open.time.4" value="7" />
           <entry key="project.open.time.5" value="6" />
-          <entry key="project.open.time.6" value="2" />
+          <entry key="project.open.time.6" value="3" />
           <entry key="project.open.time.7" value="3" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="19" />
+          <entry key="project.opened" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="26790" />
+          <entry key="py" value="27606" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="26790" />
+          <entry key="Python" value="27606" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,13 +85,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="472">
-              <caret line="355" column="105" selection-start-line="355" selection-start-column="105" selection-end-line="355" selection-end-column="105" />
+            <state relative-caret-position="285">
+              <caret line="288" column="24" selection-start-line="288" selection-start-column="24" selection-end-line="288" selection-end-column="24" />
               <folding>
-                <element signature="e#0#59#0" expanded="true" />
-                <marker date="1544484675564" expanded="true" signature="198:237" ph="..." />
-                <marker date="1544484675564" expanded="true" signature="257:295" ph="..." />
-                <marker date="1544484675564" expanded="true" signature="312:351" ph="..." />
+                <marker date="1544520700743" expanded="true" signature="10401:10730" ph="..." />
               </folding>
             </state>
           </provider>
@@ -337,13 +334,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="355" column="105" selection-start-line="355" selection-start-column="105" selection-end-line="355" selection-end-column="105" />
+        <state relative-caret-position="285">
+          <caret line="288" column="24" selection-start-line="288" selection-start-column="24" selection-end-line="288" selection-end-column="24" />
           <folding>
-            <element signature="e#0#59#0" expanded="true" />
-            <marker date="1544484675564" expanded="true" signature="198:237" ph="..." />
-            <marker date="1544484675564" expanded="true" signature="257:295" ph="..." />
-            <marker date="1544484675564" expanded="true" signature="312:351" ph="..." />
+            <marker date="1544520700743" expanded="true" signature="10401:10730" ph="..." />
           </folding>
         </state>
       </provider>

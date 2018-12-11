@@ -189,30 +189,35 @@ class Organism:
     # Organism systems
 
     def brain(self):
-        if self.energy > 1500:
-            self.divide(1000, 400)
-        else:
+        thinking_array = [3000 - self.energy, 3000/self.AC, self.energy] # siia võiks geenikordajad panna
+        choice = 0
+        choice_value = -inf
+        for i in range(len(thinking_array)):
+            if thinking_array[i] > choice_value:
+                choice_value = thinking_array[i]
+                choice = i
 
+        if choice == 0: # accelerate towards nearest food
             Default = True
             if Default:
                 nearby_entities = []
                 bestgoal = self
                 bestdistance = inf
 
-                y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM-1)
-                y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM-1), 0)
-                x_floor = min(max(self.x_chunk - self.chunk_range, 0), x_chunkNUM-1)
-                x_ceil = max(min(self.x_chunk + self.chunk_range, x_chunkNUM-1), 0)
+                y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM - 1)
+                y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM - 1), 0)
+                x_floor = min(max(self.x_chunk - self.chunk_range, 0), x_chunkNUM - 1)
+                x_ceil = max(min(self.x_chunk + self.chunk_range, x_chunkNUM - 1), 0)
 
-                for y in range(y_floor, y_ceil+1):
-                    for x in range(x_floor, x_ceil+1):
+                for y in range(y_floor, y_ceil + 1):
+                    for x in range(x_floor, x_ceil + 1):
                         for entity in itertools.chain(world_space[y][x]):
                             if entity != self:
                                 nearby_entities.append(entity)
 
                 for entity in nearby_entities:
                     if type(entity) == food:
-                        distance = (fabs(self.cx - entity.cx)**2 + fabs(self.cy - entity.cy)**2)**(1/2)
+                        distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
                         if distance < bestdistance:
                             bestdistance = distance
                             bestgoal = entity
@@ -220,11 +225,17 @@ class Organism:
                 x_dir = bestgoal.cx - self.cx
                 y_dir = bestgoal.cy - self.cy
 
-            if bestdistance <= ((self.width/2)+(bestgoal.width/2)):
+            if bestdistance <= ((self.width / 2) + (bestgoal.width / 2)):
                 if (bestgoal in food_list) or (bestgoal in organism_list):
                     self.eat(1000, bestgoal)
             elif x_dir != 0 or y_dir != 0:
                 self.accelerate(x_dir, y_dir, 5)
+
+        elif choice == 1: # change own shape
+            self.grow(200)
+
+        elif choice == 2: # divide
+            self.divide(1000, 400)
 
     def motor(self):
         self.exist()
@@ -274,6 +285,13 @@ class Organism:
         genecode = self.genecode  # lisa mutateerimisfunktsioon
         Organism(m, e, x, y, w, genecode)
 
+    def grow(self, e):
+        self.energy -= e
+        self.width += log(e)/(self.AC*(3/2))
+        self.AC = float((self.width / 4) * self.mass / exist_dif)
+
+        screen.coords(self.body, (self.cx - (self.width / 2)) * scale, (self.cy - (self.width / 2)) * scale, (self.cx + (self.width / 2)) * scale, (self.cy + (self.width / 2)) * scale)
+
 
     # state resolution
 
@@ -315,9 +333,9 @@ class food:
         self.tree_level = tree_level
         self.expansionlimit = 1000 + 500*(self.tree_level**2)
 
-        r_col = str(hex(min(127+32*tree_level,255))).replace("0x", "").rjust(2, "0")
-        g_col = str(hex(max(255-32*tree_level,0))).replace("0x", "").rjust(2, "0")
-        b_col = str(hex(63)).replace("0x", "").rjust(2, "0")
+        r_col = str(hex(int(min(127+32*tree_level, 255)))).replace("0x", "").rjust(2, "0")
+        g_col = str(hex(int(max(255-32*tree_level, 0)))).replace("0x", "").rjust(2, "0")
+        b_col = str(hex(int(63))).replace("0x", "").rjust(2, "0")
         self.hex_col = "#" + r_col + g_col + b_col
 
         self.body = screen.create_rectangle((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill=self.hex_col)
