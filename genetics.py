@@ -610,16 +610,19 @@ def river():
 Populatsiooni_arv = StringVar()
 Toidu_arv = StringVar()
 timer = StringVar()
+FPS = StringVar()
 
 status_bar = Frame(root, height=30, relief=SUNKEN, bd=1)
 status_bar.pack(side=TOP, fill=X)
 
 l1 = Label(status_bar, text="Populatsioon: ",textvariable=Populatsiooni_arv,width=20,font=("arial",10))
 l2 = Label(status_bar, text="Toit: ",textvariable=Toidu_arv,width=20,font=("arial",10))
-l3 = Label(status_bar,text="Aeg",textvariable=timer,width=20,font=("arial",10))
+l3 = Label(status_bar,text="Aeg: ",textvariable=timer,width=20,font=("arial",10))
+l4 = Label(status_bar,text="FPS: ",textvariable=FPS,font=("courier",10))
 l1.pack(side=LEFT)
 l2.pack(side=LEFT)
-l3.pack(side=RIGHT)
+l3.pack(side=LEFT)
+l4.pack(side=RIGHT)
 
 #Create Screen
 
@@ -657,6 +660,7 @@ world_speed = 0.05
 Aeg = 1000
 world_clock = Aeg
 while True:
+    start_time = time.time()
 
     world_clock -= 1
 
@@ -690,6 +694,9 @@ while True:
 
     root.update()
     time.sleep(world_speed)
+    if world_clock%5:
+        FPS.set("FPS: "+str(round(1.0/(time.time()-start_time), 2)))
+
 
 ##Standard print mode
 
