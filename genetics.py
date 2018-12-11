@@ -73,7 +73,7 @@ mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
 union_dif = 2000
-sunlight = 2.5
+sunlight = 4
 organism_list = []
 food_list = []
 
@@ -128,7 +128,7 @@ class Organism:
 
         self.hex_col = "#" + r_col + g_col + b_col
 
-        self.body = screen.create_oval((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill=self.hex_col)
+        self.body = screen.create_oval(round((self.cx - (self.width / 2))*scale, 8), round((self.cy - (self.width / 2))*scale, 8), round((self.cx + (self.width / 2))*scale, 8), round((self.cy + (self.width / 2))*scale, 8), fill=self.hex_col)
 
         organism_list.append(self)
         # Geen 3 - Mõjutab olendi enerigiat
@@ -245,10 +245,15 @@ class Organism:
     # actions
 
     def eat(self, energy_ratio, entity):
-        self.energy += entity.energy * (1000 / (cnsme_dif*10))
-        self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
-        self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
-        entity.die()
+        if not entity.markedfordeath:
+            before = self.energy
+            self.energy += entity.energy * (1000 / (cnsme_dif*10))
+            self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
+            self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
+            after = self.energy
+            if after < before:
+                print("Organism gained negative energy through eating?",after-before)
+            entity.die()
 
     def accelerate(self, x, y, e):
         ex = e * (x / (abs(x) + abs(y)))
@@ -320,6 +325,11 @@ class food:
     def __init__(self, e, m, x, y, tree_level):
         self.energy = e
         self.mass = m
+
+        if self.energy < 0 or self.mass < 0: # abort
+            print("aborted plant creation because of negative energy")
+            del self
+            return
         self.width = (self.energy**(2/5))
 
         self.cx = x
@@ -338,7 +348,12 @@ class food:
         b_col = str(hex(int(63))).replace("0x", "").rjust(2, "0")
         self.hex_col = "#" + r_col + g_col + b_col
 
-        self.body = screen.create_rectangle((self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale, fill=self.hex_col)
+        x_top = round((self.cx - (self.width / 2))*scale, 8)
+        y_top = round((self.cy - (self.width / 2))*scale, 8)
+        x_bot = round((self.cx + (self.width / 2))*scale, 8)
+        y_bot = round((self.cy + (self.width / 2))*scale, 8)
+
+        self.body = screen.create_rectangle(x_top, y_top, x_bot, y_bot, fill=self.hex_col)
 
         food_list.append(self)
 
@@ -351,34 +366,37 @@ class food:
 
     def motor(self):
         chunk_fertility = world_space_fertility[self.y_chunk][self.x_chunk]
-
-        if chunk_fertility > 5:
-            plants = []
-            for plant in world_space[self.y_chunk][self.x_chunk]:
-                if type(plant) == food:
-                    if plant != self and not plant.markedfordeath and plant.tree_level == self.tree_level:
-                        distance = min(fabs(plant.cx - self.cx), fabs(plant.cy - self.cy)) - plant.width/2
-                        if distance < self.width/2:
-                            plants.append(plant)
-
-            if len(plants) > 4:
-                energy = self.energy
-                mass = self.mass
-                while len(plants) > 5:
-                    del plants[randint(0,len(plants)-1)]
-                for plant in plants:
-                    energy += plant.energy
-                    mass += plant.mass
-                    plant.markedfordeath = True
-
-                food(energy*(1000/union_dif), mass*(1000/union_dif), self.cx, self.cy, self.tree_level+1)
-                self.markefordeath = True
-
-        else:
+        if not self.markedfordeath:
             self.energy += chunk_fertility
             self.mass += chunk_fertility
-            if self.energy < 10:
-                self.markefordeath = True
+            if self.energy < 10 or self.mass < 10:
+                self.markedfordeath = True
+            else:
+                if chunk_fertility > 5:
+                    plants = []
+                    for plant in world_space[self.y_chunk][self.x_chunk]:
+                        if type(plant) == food:
+                            if plant != self and not plant.markedfordeath and plant.tree_level == self.tree_level:
+                                distance = min(fabs(plant.cx - self.cx), fabs(plant.cy - self.cy)) - plant.width/2
+                                if distance < self.width/2:
+                                    plants.append(plant)
+
+                    if len(plants) > 4:
+                        energy = self.energy
+                        mass = self.mass
+                        while len(plants) > 5:
+                            del plants[randint(0,len(plants)-1)]
+                        for plant in plants:
+                            energy += plant.energy
+                            mass += plant.mass
+                            plant.markedfordeath = True
+
+                        food(energy*(1000/union_dif), mass*(1000/union_dif), self.cx, self.cy, self.tree_level+1)
+                        self.markedfordeath = True
+        if self.energy < 10 and not self.markedfordeath:
+            print("passed through plant with negative energy?!?")
+
+
 
     def expand(self, ratio):
         e = self.energy*(ratio/1000)
@@ -528,10 +546,10 @@ def time_pass():
         organism_list[i].brain()
         organism_list[i].motor()
     for i in range(len(food_list) -1, -1, -1):
-        food_list[i].brain()
-        food_list[i].motor()
-    for i in range(len(food_list) -1, -1, -1):
-        if food_list[i].markedfordeath:
+        if not food_list[i].markedfordeath:
+            food_list[i].brain()
+            food_list[i].motor()
+        else:
             food_list[i].die()
 
 def update_chunks():
@@ -643,6 +661,7 @@ while True:
     world_clock -= 1
 
     update_chunks()
+
     Populatsiooni_arv.set("Populatsioon: "+str((len(organism_list))))
     Toidu_arv.set("Toit: "+str((len(food_list))))
     timer.set("Aeg: "+str(world_clock))
@@ -659,6 +678,7 @@ while True:
     else:
         l3.config(fg="green")
 
+    time_pass()
     if world_clock == 0:
         generation_pass()
         world_clock = Aeg
@@ -667,8 +687,6 @@ while True:
         for i in range(len(organism_list)):
             organism_list[i].update_color()
             organism_list[i].update_tags()
-
-    time_pass()
 
     root.update()
     time.sleep(world_speed)

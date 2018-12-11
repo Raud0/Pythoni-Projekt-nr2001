@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b0f24573-b646-4d8d-80e2-7ce5f1d990f3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/genetics.py" beforeDir="false" afterPath="$PROJECT_DIR$/genetics.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,24 +47,24 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="21" />
+          <entry key="project.closed" value="22" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.4" value="7" />
           <entry key="project.open.time.5" value="6" />
           <entry key="project.open.time.6" value="3" />
-          <entry key="project.open.time.7" value="3" />
+          <entry key="project.open.time.7" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="21" />
+          <entry key="project.opened" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="27606" />
+          <entry key="py" value="28745" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="27606" />
+          <entry key="Python" value="28745" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,10 +84,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="288" column="24" selection-start-line="288" selection-start-column="24" selection-end-line="288" selection-end-column="24" />
+            <state relative-caret-position="510">
+              <caret line="75" column="12" selection-start-line="75" selection-start-column="12" selection-end-line="75" selection-end-column="12" />
               <folding>
-                <marker date="1544520700743" expanded="true" signature="10401:10730" ph="..." />
+                <marker date="1544547978925" expanded="true" signature="8777:9273" ph="..." />
+                <marker date="1544547978925" expanded="true" signature="10675:11004" ph="..." />
               </folding>
             </state>
           </provider>
@@ -105,6 +105,7 @@
       <find>oval</find>
       <find>create_food</find>
       <find>food</find>
+      <find>marke</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -131,6 +132,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -142,7 +144,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -334,10 +335,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="288" column="24" selection-start-line="288" selection-start-column="24" selection-end-line="288" selection-end-column="24" />
+        <state relative-caret-position="510">
+          <caret line="75" column="12" selection-start-line="75" selection-start-column="12" selection-end-line="75" selection-end-column="12" />
           <folding>
-            <marker date="1544520700743" expanded="true" signature="10401:10730" ph="..." />
+            <marker date="1544547978925" expanded="true" signature="8777:9273" ph="..." />
+            <marker date="1544547978925" expanded="true" signature="10675:11004" ph="..." />
           </folding>
         </state>
       </provider>
