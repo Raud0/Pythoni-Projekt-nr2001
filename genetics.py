@@ -690,22 +690,26 @@ for y in range(y_t_chunkNUM):
         if y <= 1:
             a_n += -200
             a_s += -a_n
-            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
 
         if y >= y_t_chunkNUM - 2:
             a_s += -200
             a_n += -a_s
-            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
 
         if x <= 1:
             a_w += -200
             a_e += -a_w
-            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
 
         if x >= y_t_chunkNUM - 2:
             a_e += -200
             a_w += -a_e
-            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
+
+        slope = floor(((1000-(((a_n**2 + a_s**2 + a_w**2 + a_e**2)/4)**(1/2)))/1000)*255)
+        r_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
+        g_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
+        b_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
+        hex_col = "#" + r_col + g_col + b_col
+
+        screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col, outline="")
 
         world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
 
