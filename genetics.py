@@ -57,6 +57,8 @@ worldWIDTH = 4000
 worldHEIGHT = 4000
 chunkWIDTH = 100
 chunkHEIGHT = 100
+t_chunkWIDTH = 50
+t_chunkHEIGHT = 50
 screenWIDTH = 1000
 screenHEIGHT = 1000
 
@@ -267,9 +269,22 @@ class Organism:
         ey = e * (y / (abs(x) + abs(y)))
         self.energy -= e*(accel_dif/(1000*10))
 
+        accel_mods = world_space_terrain[floor(self.cy/t_chunkHEIGHT)][floor(self.cx/t_chunkWIDTH)][0:4]
+        a_w = accel_mods[0]
+        a_e = accel_mods[1]
+        a_n = accel_mods[2]
+        a_s = accel_mods[3]
         self.vx += (ex / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
+        if self.vx < 0:
+            self.vx *= (1000 + a_w)/1000
+        elif self.vx > 0:
+            self.vx *= (1000 + a_e)/1000
         self.vy += (ey / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
-        
+        if self.vy < 0:
+            self.vy *= (1000 + a_n)/1000
+        elif self.vy > 0:
+            self.vy *= (1000 + a_s)/1000
+
     def divide(self, t, ratio):
 
         efficiency = (self.HP/1000)*(t/birth_dif)
@@ -425,7 +440,7 @@ class food:
 
 def create_food():
     for i in range(max(x_chunkNUM*y_chunkNUM*2-len(food_list), 1)):
-        food(randint(50, 800), randint(50, 1000), randint(50, worldWIDTH - 50), randint(50, worldHEIGHT - 50), 0)
+        food(randint(50, 800), randint(50, 1000), randint(100, worldWIDTH - 100), randint(100, worldHEIGHT - 100), 0)
 
 def create_initial_population(start_pop, dna_length):
     for creature in range(start_pop):
@@ -433,8 +448,8 @@ def create_initial_population(start_pop, dna_length):
         m = randint(1000, 2000)
         e = randint(1000, 2000)
         w = randint(30, 60)
-        x = randint(round(w / 2), worldWIDTH - round(w / 2))
-        y = randint(round(w / 2), worldHEIGHT - round(w / 2))
+        x = randint(round(w / 2) + 2*t_chunkWIDTH, worldWIDTH - round(w / 2) - 2*t_chunkWIDTH)
+        y = randint(round(w / 2) + 2*t_chunkHEIGHT, worldHEIGHT - round(w / 2) - 2*t_chunkHEIGHT)
 
         genecode = []
         for j in range(dna_length):
@@ -651,8 +666,50 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
         x_chunkNUM += 1
     y_chunkNUM += 1
     world_space.append(copy.deepcopy(row))
-
 world_space_fertility = copy.deepcopy(world_space)
+
+##World Terrain
+world_space_terrain = []
+y_t_chunkNUM = 0
+x_t_chunkNUM = 0
+for y in range(ceil(worldHEIGHT/t_chunkHEIGHT)):
+    row = []
+    x_t_chunkNUM = 0
+    for x in range(ceil(worldWIDTH/t_chunkWIDTH)):
+        row.append([])
+        x_t_chunkNUM += 1
+    y_t_chunkNUM += 1
+    world_space_terrain.append(copy.deepcopy(row))
+
+for y in range(y_t_chunkNUM):
+    for x in range(x_t_chunkNUM):
+        a_w = 0
+        a_e = 0
+        a_n = 0
+        a_s = 0
+        vx = 0
+        vy = 0
+        if y <= 1:
+            a_n += -200
+            a_s += -a_n
+            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
+
+        if y >= y_t_chunkNUM - 2:
+            a_s += -200
+            a_n += -a_s
+            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
+
+        if x <= 1:
+            a_w += -200
+            a_e += -a_w
+            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
+
+        if x >= y_t_chunkNUM - 2:
+            a_e += -200
+            a_w += -a_e
+            screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill="blue")
+
+        world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
 
 ##Initialize Entities
 
