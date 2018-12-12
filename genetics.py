@@ -421,6 +421,11 @@ class food:
         self.energy = e
         self.mass = m
 
+        slope = mean(world_space_terrain[floor(y / t_chunkHEIGHT)][floor(x / t_chunkWIDTH)][0:4])
+        if slope != 0:
+            del self
+            return
+
         if self.energy < 0 or self.mass < 0: # abort
             print("aborted plant creation because of negative energy")
             del self
@@ -720,13 +725,30 @@ l2.pack(side=LEFT)
 l3.pack(side=LEFT)
 l4.pack(side=RIGHT)
 
+# Menu
+def hello():
+    print("hello")
+menubar = Menu(root)
+
+options_menu = Menu(menubar,tearoff=0)
+options_menu.add_command(label="Initial population",command=hello)
+options_menu.add_command(label="Option2",command=hello)
+options_menu.add_command(label="Option3",command=hello)
+menubar.add_cascade(label="Options",menu=options_menu)
+
+help_menu = Menu(menubar,tearoff=0)
+help_menu.add_command(label="How to use",command=hello)
+help_menu.add_command(label="About",command=hello)
+menubar.add_cascade(label="Help",menu=help_menu)
+
+root.config(menu=menubar)
+
 #Create Screen
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
 
 #Lake
-#screen.create_oval(t_chunkWIDTH * randint(1,100), t_chunkHEIGHT * randint(1,100), t_chunkWIDTH * (randint(10,20) + 1), t_chunkHEIGHT * (randint(10,20) + 1),fill="blue")
 screen.pack()
 
 ##Create World
@@ -782,14 +804,32 @@ for y in range(y_t_chunkNUM):
             a_w += -a_e
 
         slope = floor(((1000-(((a_n**2 + a_s**2 + a_w**2 + a_e**2)/4)**(1/2)))/1000)*255)
+       
         r_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         g_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         b_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         hex_col = "#" + r_col + g_col + b_col
 
-        screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col, outline="")
+        world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), outline="", fill=hex_col)
 
-        world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
+        world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy, world_square)
+        
+# Cool lakes
+lake_amount = 10
+for i in range(lake_amount):
+    x = randint(2,x_t_chunkNUM-3)
+    y = randint(2,y_t_chunkNUM-3)
+    for j in range(randint(0,4)+randint(1,6)):
+        if x >= 0 and x < x_t_chunkNUM and y >= 0 and y < y_t_chunkNUM:
+            world_space_terrain[y][x] = (-200, -200, -200, -200, 0, 0, world_space_terrain[y][x][6])
+            screen.itemconfig(world_space_terrain[y][x][6], fill="blue")
+            changer = choice([-1, 1])
+            if randint(0,1) == 1:
+                x += changer
+            else:
+                y += changer
+
+
 #jõgi = screen.create_line(river(),fill="blue",width=10)
 
 ##Initialize Entities
