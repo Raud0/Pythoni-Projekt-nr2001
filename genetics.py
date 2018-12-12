@@ -250,7 +250,7 @@ class Organism:
             energy_amount = 0
             energy_amount += entity.energy * (1000 / (cnsme_dif * 10))
             energy_amount += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif * 10))
-            eating_time = randint(2,10)
+            eating_time = randint(2,10) # Needs configuration
             energy_gain = (energy_amount/(2*eating_time)) + 2*eating_time
             while eating_time > 0:
                 self.energy += energy_gain
