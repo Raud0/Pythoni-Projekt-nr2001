@@ -1,4 +1,4 @@
-from math import exp, log, ceil, floor, fabs, copysign, inf, sin
+from math import exp, log, ceil, floor, fabs, copysign, inf, sin, pi
 from tkinter import *
 from random import randint, choice
 from statistics import mean
@@ -365,10 +365,12 @@ class Organism:
         self.AC = float((self.width / 4) * self.mass / exist_dif)
 
         self.width *= (((1000 - ratio)/1000)**(1/2))
-        x = self.cx + (self.width + w) / 4
-        self.cx += -(self.width + w) / 4
-        y = self.cy
-        self.cy += -(self.width + w) / 4
+        x_dir = choice([-1, 1])
+        y_dir = choice([-1, 1])
+        x = self.cx + x_dir*(self.width + w) / 4
+        self.cx += - x_dir*(self.width + w) / 4
+        y = self.cy + y_dir*(self.width + w) / 4
+        self.cy += - y_dir*(self.width + w) / 4
         screen.coords(self.body, (self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale)
 
         genecode = self.genecode  # lisa mutateerimisfunktsioon
@@ -387,7 +389,9 @@ class Organism:
     # state resolution
 
     def exist(self):
-        self.energy -= (self.mass ** 2) * (exist_dif/(1000*100000)) * (1 / self.AC) * (1000 / self.HP)
+        energy_loss = self.mass * ((self.width/2)**2) * pi * (exist_dif/(1000*1000000)) * (1000 / self.HP) * (1/self.AC)
+        print(energy_loss)
+        self.energy -= energy_loss
         if self.energy <= 0:
             self.die()
 
