@@ -47,26 +47,26 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="28" />
+          <entry key="project.closed" value="32" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.3" value="2" />
-          <entry key="project.open.time.4" value="9" />
+          <entry key="project.open.time.3" value="3" />
+          <entry key="project.open.time.4" value="11" />
           <entry key="project.open.time.5" value="7" />
           <entry key="project.open.time.6" value="5" />
           <entry key="project.open.time.7" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="29" />
+          <entry key="project.opened" value="32" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="65" />
-          <entry key="py" value="34303" />
+          <entry key="py" value="35056" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="34368" />
+          <entry key="Python" value="35121" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,11 +86,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="250" column="8" selection-start-line="250" selection-start-column="8" selection-end-line="250" selection-end-column="8" />
+            <state relative-caret-position="546">
+              <caret line="383" column="69" lean-forward="true" selection-start-line="383" selection-start-column="69" selection-end-line="383" selection-end-column="69" />
               <folding>
-                <element signature="e#0#64#0" expanded="true" />
-                <marker date="1544641348968" expanded="true" signature="5046:5497" ph="..." />
+                <element signature="e#0#68#0" expanded="true" />
+                <marker date="1544652251103" expanded="true" signature="5081:5532" ph="..." />
               </folding>
             </state>
           </provider>
@@ -100,7 +100,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>print</find>
       <find>len(world_space</find>
       <find>tk</find>
       <find>worldwidth</find>
@@ -110,6 +109,7 @@
       <find>marke</find>
       <find>self.markedfordeath</find>
       <find>genecode</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -126,7 +126,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
+    <option name="x" value="-1928" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1096" />
@@ -282,15 +282,14 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
+    <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.057955742" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32640332" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32640332" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3991684" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -341,11 +340,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="250" column="8" selection-start-line="250" selection-start-column="8" selection-end-line="250" selection-end-column="8" />
+        <state relative-caret-position="546">
+          <caret line="383" column="69" lean-forward="true" selection-start-line="383" selection-start-column="69" selection-end-line="383" selection-end-column="69" />
           <folding>
-            <element signature="e#0#64#0" expanded="true" />
-            <marker date="1544641348968" expanded="true" signature="5046:5497" ph="..." />
+            <element signature="e#0#68#0" expanded="true" />
+            <marker date="1544652251103" expanded="true" signature="5081:5532" ph="..." />
           </folding>
         </state>
       </provider>

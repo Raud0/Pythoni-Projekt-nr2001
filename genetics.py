@@ -1,4 +1,4 @@
-from math import exp, log, ceil, floor, fabs, copysign, inf, sin
+from math import exp, log, ceil, floor, fabs, copysign, inf, sin, pi
 from tkinter import *
 from random import randint, choice
 from statistics import mean
@@ -133,6 +133,8 @@ class Organism:
         self.age = 1
         self.divisions = 1
 
+        self.friends = [self]
+
         self.colour_mode = 2
         if self.colour_mode == 0:
             r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
@@ -259,7 +261,6 @@ class Organism:
         if choice == 0: # accelerate towards nearest food
             Default = True
             if Default:
-                nearby_entities = []
                 bestgoal = self
                 bestvalue = -inf
                 bestdistance = inf
@@ -272,7 +273,11 @@ class Organism:
                 for y in range(y_floor, y_ceil + 1):
                     for x in range(x_floor, x_ceil + 1):
                         for entity in itertools.chain(world_space[y][x]):
-                            if entity != self:
+                            if (type(entity) == Organism) and entity not in self.friends:
+                                should = self.gene_evaluator(self.genecode,entity.genecode)
+                                if should < 0.05:
+                                    self.friends.append(entity)
+                            if entity not in self.friends:
                                 distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
                                 value = entity.width/distance
                                 if value > bestvalue:
@@ -365,13 +370,18 @@ class Organism:
         self.AC = float((self.width / 4) * self.mass / exist_dif)
 
         self.width *= (((1000 - ratio)/1000)**(1/2))
-        x = self.cx + (self.width + w) / 4
-        self.cx += -(self.width + w) / 4
-        y = self.cy
-        self.cy += -(self.width + w) / 4
+        x_dir = choice([-1, 1])
+        y_dir = choice([-1, 1])
+        x = self.cx + x_dir*(self.width + w) / 4
+        self.cx += - x_dir*(self.width + w) / 4
+        y = self.cy + y_dir*(self.width + w) / 4
+        self.cy += - y_dir*(self.width + w) / 4
         screen.coords(self.body, (self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale)
 
-        genecode = self.genecode  # lisa mutateerimisfunktsioon
+        genecode = self.genecode
+        mutation = randint(0,3)
+        for i in range(mutation):
+            genecode[randint(0, len(genecode)-1)] += randint(-20, 20)
         Organism(m, e, x, y, w, genecode)
 
     def grow(self, e):
@@ -387,7 +397,8 @@ class Organism:
     # state resolution
 
     def exist(self):
-        self.energy -= (self.mass ** 2) * (exist_dif/(1000*100000)) * (1 / self.AC) * (1000 / self.HP)
+        energy_loss = self.mass * ((self.width/2)**2) * pi * (exist_dif/(1000*1000000)) * (1000 / self.HP) * (1/self.AC)
+        self.energy -= energy_loss
         if self.energy <= 0:
             self.die()
 
