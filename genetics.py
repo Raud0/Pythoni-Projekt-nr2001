@@ -709,14 +709,30 @@ l2.pack(side=LEFT)
 l3.pack(side=LEFT)
 l4.pack(side=RIGHT)
 
+# Menu
+def hello():
+    print("hello")
+menubar = Menu(root)
+
+options_menu = Menu(menubar,tearoff=0)
+options_menu.add_command(label="Initial population",command=hello)
+options_menu.add_command(label="Option2",command=hello)
+options_menu.add_command(label="Option3",command=hello)
+menubar.add_cascade(label="Options",menu=options_menu)
+
+help_menu = Menu(menubar,tearoff=0)
+help_menu.add_command(label="How to use",command=hello)
+help_menu.add_command(label="About",command=hello)
+menubar.add_cascade(label="Help",menu=help_menu)
+
+root.config(menu=menubar)
+
 #Create Screen
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
-jõgi = screen.create_line(river(),fill="blue",width=10)
 
 #Lake
-#screen.create_oval(t_chunkWIDTH * randint(1,100), t_chunkHEIGHT * randint(1,100), t_chunkWIDTH * (randint(10,20) + 1), t_chunkHEIGHT * (randint(10,20) + 1),fill="blue")
 screen.pack()
 
 ##Create World
@@ -736,6 +752,7 @@ world_space_fertility = copy.deepcopy(world_space)
 
 ##World Terrain
 world_space_terrain = []
+lake = []
 y_t_chunkNUM = 0
 x_t_chunkNUM = 0
 for y in range(ceil(worldHEIGHT/t_chunkHEIGHT)):
@@ -772,14 +789,33 @@ for y in range(y_t_chunkNUM):
             a_w += -a_e
 
         slope = floor(((1000-(((a_n**2 + a_s**2 + a_w**2 + a_e**2)/4)**(1/2)))/1000)*255)
+       
         r_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         g_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         b_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         hex_col = "#" + r_col + g_col + b_col
 
-        screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col, outline="")
+        world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col)
+        lake.append(world_square)
 
         world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
+        
+# Cool lakes
+lake_amount = 10
+for i in range(lake_amount):
+    x = randint(10,6000)
+    screen.itemconfig(lake[x],fill="blue")
+    x += 1
+    screen.itemconfig(lake[x],fill="blue")
+    x += 1
+    screen.itemconfig(lake[x],fill="blue")
+    x += 78
+    screen.itemconfig(lake[x],fill="blue")
+    x += 1
+    screen.itemconfig(lake[x],fill="blue")
+    x += 1
+    screen.itemconfig(lake[x],fill="blue")
+    x += 1
 
 ##Initialize Entities
 
