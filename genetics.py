@@ -763,7 +763,7 @@ root.config(menu=menubar)
 #Create Screen
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
-screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT,width=11)
+screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT,width=10)
 
 #Lake
 screen.pack()
