@@ -752,7 +752,9 @@ while True:
     root.update()
     time.sleep(world_speed)
     if world_clock%5:
-        FPS.set("FPS: "+str(round(1.0/(time.time()-start_time), 2)))
+        end_time = time.time()
+        if end_time > start_time:
+            FPS.set("FPS: "+str(round(1.0/(end_time-start_time), 2)))
 
 
 ##Standard print mode
