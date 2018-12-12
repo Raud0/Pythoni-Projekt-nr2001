@@ -1,11 +1,13 @@
 from math import exp, log, ceil, floor, fabs, copysign, inf, sin, pi
 from tkinter import *
+from tkinter import messagebox, colorchooser
 from random import randint, choice
 from statistics import mean
 import time
 import itertools
 import copy
 import numpy as np
+
 
 # Input Functions
 
@@ -720,20 +722,27 @@ l2.pack(side=LEFT)
 l3.pack(side=LEFT)
 l4.pack(side=RIGHT)
 
-# Menu
+# Menu, WiP but is not necessary for program to function
 def hello():
     print("hello")
+def about():
+    messagebox.showinfo(title="About",message="Project: Evolution Simulator\nVersion 0.7\n")
+def color_chooser():
+    color = colorchooser.askcolor(title="Pick an organism color!")
+def howto():
+    messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve\nYou can choose variables from the options menu")
+    
 menubar = Menu(root)
 
 options_menu = Menu(menubar,tearoff=0)
 options_menu.add_command(label="Initial population",command=hello)
-options_menu.add_command(label="Option2",command=hello)
+options_menu.add_command(label="Organism color",command=color_chooser)
 options_menu.add_command(label="Option3",command=hello)
 menubar.add_cascade(label="Options",menu=options_menu)
 
 help_menu = Menu(menubar,tearoff=0)
-help_menu.add_command(label="How to use",command=hello)
-help_menu.add_command(label="About",command=hello)
+help_menu.add_command(label="How to use",command=howto)
+help_menu.add_command(label="About",command=about)
 menubar.add_cascade(label="Help",menu=help_menu)
 
 root.config(menu=menubar)
