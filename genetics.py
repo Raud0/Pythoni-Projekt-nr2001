@@ -338,7 +338,7 @@ class Organism:
         screen.delete(self.body)
         del organism_list[organism_list.index(self)]
         del self
-        
+
 
 class food:
 
@@ -625,6 +625,8 @@ def river():
         river_xy.append(int(sin(x*x_tegur) * y_amp) + 2500)
     return river_xy
 
+
+
 ##Create Frame
 
 Populatsiooni_arv = StringVar()
@@ -649,6 +651,9 @@ l4.pack(side=RIGHT)
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
 jõgi = screen.create_line(river(),fill="blue",width=10)
+
+#Lake
+#screen.create_oval(t_chunkWIDTH * randint(1,100), t_chunkHEIGHT * randint(1,100), t_chunkWIDTH * (randint(10,20) + 1), t_chunkHEIGHT * (randint(10,20) + 1),fill="blue")
 screen.pack()
 
 ##Create World
