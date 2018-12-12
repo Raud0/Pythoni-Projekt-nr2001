@@ -275,7 +275,7 @@ class Organism:
                         for entity in itertools.chain(world_space[y][x]):
                             if (type(entity) == Organism) and entity not in self.friends:
                                 should = self.gene_evaluator(self.genecode,entity.genecode)
-                                if should < 0.03:
+                                if should < 0.05:
                                     self.friends.append(entity)
                             if entity not in self.friends:
                                 distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
@@ -378,7 +378,10 @@ class Organism:
         self.cy += - y_dir*(self.width + w) / 4
         screen.coords(self.body, (self.cx - (self.width / 2))*scale, (self.cy - (self.width / 2))*scale, (self.cx + (self.width / 2))*scale, (self.cy + (self.width / 2))*scale)
 
-        genecode = self.genecode  # lisa mutateerimisfunktsioon
+        genecode = self.genecode
+        mutation = randint(0,3)
+        for i in range(mutation):
+            genecode[randint(0, len(genecode)-1)] += randint(-20, 20)
         Organism(m, e, x, y, w, genecode)
 
     def grow(self, e):
