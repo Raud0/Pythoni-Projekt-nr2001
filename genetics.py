@@ -423,6 +423,11 @@ class food:
         self.energy = e
         self.mass = m
 
+        slope = mean(world_space_terrain[floor(y / t_chunkHEIGHT)][floor(x / t_chunkWIDTH)][0:4])
+        if slope != 0:
+            del self
+            return
+
         if self.energy < 0 or self.mass < 0: # abort
             print("aborted plant creation because of negative energy")
             del self
@@ -772,7 +777,6 @@ world_space_fertility = copy.deepcopy(world_space)
 
 ##World Terrain
 world_space_terrain = []
-lake = []
 y_t_chunkNUM = 0
 x_t_chunkNUM = 0
 for y in range(ceil(worldHEIGHT/t_chunkHEIGHT)):
@@ -815,27 +819,27 @@ for y in range(y_t_chunkNUM):
         b_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         hex_col = "#" + r_col + g_col + b_col
 
-        world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col)
-        lake.append(world_square)
+        world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), outline="", fill=hex_col)
 
-        world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
+        world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy, world_square)
         
 # Cool lakes
 lake_amount = 10
 for i in range(lake_amount):
-    x = randint(10,6000)
-    screen.itemconfig(lake[x],fill="blue")
-    x += 1
-    screen.itemconfig(lake[x],fill="blue")
-    x += 1
-    screen.itemconfig(lake[x],fill="blue")
-    x += 78
-    screen.itemconfig(lake[x],fill="blue")
-    x += 1
-    screen.itemconfig(lake[x],fill="blue")
-    x += 1
-    screen.itemconfig(lake[x],fill="blue")
-    x += 1
+    x = randint(2,x_t_chunkNUM-3)
+    y = randint(2,y_t_chunkNUM-3)
+    for j in range(randint(0,4)+randint(1,6)):
+        if x >= 0 and x < x_t_chunkNUM and y >= 0 and y < y_t_chunkNUM:
+            world_space_terrain[y][x] = (-200, -200, -200, -200, 0, 0, world_space_terrain[y][x][6])
+            screen.itemconfig(world_space_terrain[y][x][6], fill="blue")
+            changer = choice([-1, 1])
+            if randint(0,1) == 1:
+                x += changer
+            else:
+                y += changer
+
+
+#jõgi = screen.create_line(river(),fill="blue",width=10)
 
 ##Initialize Entities
 
