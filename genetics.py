@@ -1,9 +1,12 @@
 from math import exp, log, ceil, floor, fabs, copysign, inf, sin
 from tkinter import *
 from random import randint, choice
+from statistics import mean
 import time
 import itertools
 import copy
+import numpy as np
+
 # Input Functions
 
 def leftKey(event):
@@ -50,6 +53,24 @@ def priorKey(event):
 
 def sigmoid(x):
     return 1 / (1 + exp(-x))
+
+# https://en.wikipedia.org/wiki/Approximate_entropy
+#
+# def ApEn(U, m, r):
+#
+#     def _maxdist(x_i, x_j):
+#         return max([abs(ua - va) for ua, va in zip(x_i, x_j)])
+#
+#     def _phi(m):
+#         x = [[U[j] for j in range(i, i + m - 1 + 1)] for i in range(N - m + 1)]
+#         C = [len([1 for x_j in x if _maxdist(x_i, x_j) <= r]) / (N - m + 1.0) for x_i in x]
+#         return (N - m + 1.0)**(-1) * sum(np.log(C))
+#
+#     N = len(U)
+#
+#     return abs(_phi(m+1) - _phi(m))
+
+
 
 # World Constants
 
@@ -101,12 +122,16 @@ class Organism:
         self.chunk_range = 1
 
         self.genecode = genecode
+        self.genecomplexity = self.gene_evaluator(genecode)
 
         self.elite = False
         self.early = False
         self.child = False
         self.lucky = False
         self.markedfordeath = False
+
+        self.age = 1
+        self.divisions = 1
 
         self.colour_mode = 2
         if self.colour_mode == 0:
@@ -131,13 +156,37 @@ class Organism:
         self.body = screen.create_oval(round((self.cx - (self.width / 2))*scale, 8), round((self.cy - (self.width / 2))*scale, 8), round((self.cx + (self.width / 2))*scale, 8), round((self.cy + (self.width / 2))*scale, 8), fill=self.hex_col)
 
         organism_list.append(self)
-        # Geen 3 - Mõjutab olendi enerigiat
-        # Geen 2 - Mõjutab olendi massi
-        # Geen 1 - Mõjutab kui kaugele näevad
-        self.energy = self.energy + (organism_list[0].genecode[2])
-        self.mass = self.mass + (organism_list[0].genecode[1])
+        # Geen 0: ??
+        # Geen 1: Maagiline energia
+        # Geen 2: Maagiline mass
+        # Geen 3: Eating Weight
+        # Geen 4: Growing Weight
+        # Geen 5: Division Weight
+        # Geen 6: Division Ratio
+        # Geen 7: Bite size
+        # Geen 8: Growth Ratio
+
+        self.energy += (self.genecode[2])/10
+        self.mass += (self.genecode[1])/10
         #self.chunk_range = floor(self.chunk_range + ((organism_list[0].genecode[0]) / 10 )) liiga suur, nägemiskaugus on piiratud selle jaoks, et organismi liiga palju küsimisi ei teeks enda ümber, sest see mõjutab performance'it kõvasti
     # evolution functions
+
+    def gene_evaluator(self,genes1,genes2=[]):
+        collector = 0
+
+        if len(genes2) == 0:
+            for i in range(len(genes1)):
+                collector += (fabs(500-genes1[i]))/500
+            collector *= collector
+
+        else:
+            i_range = min(len(genes1),len(genes2))
+            for i in range(i_range):
+                collector += fabs(genes1[i]-genes2[i])/(fabs(genes1[i])+1)
+            collector += fabs(len(genes1) - len(genes2))
+
+        return collector
+
 
     def update_color(self):
         if self.colour_mode == 0:
@@ -171,16 +220,19 @@ class Organism:
 
         mode = 0
         if mode == 0:
+            # default fitness
+            self.fitness_rating = self.age*self.age/self.divisions
+        elif mode == 1:
             # blue preference
             for j in range(len(self.genecode)):
                 self.fitness_rating += self.genecode[j] * (j ** 2)
-        if mode == 1:
+        elif mode == 2:
             # dark preference
             self.fitness_rating = 1000 / (1 + self.genecode[0] * self.genecode[1] * self.genecode[2])
-        if mode == 2:
+        elif mode == 3:
             # blue dislike
             self.fitness_rating = ((self.genecode[0] ** 2) + (self.genecode[1] ** 2)) / (1 + self.genecode[2])
-        if mode == 3:
+        elif mode == 4:
             # pink!
             x = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
             y = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
@@ -189,8 +241,14 @@ class Organism:
     # Organism systems
 
     def brain(self):
+        # Geen 3: Eating Weight
+        # Geen 4: Growing Weight
+        # Geen 5: Division Weight
+        # Geen 6: Division Ratio
+        # Geen 7: Bite size
+        # Geen 8: Growth Ratio
 
-        thinking_array = [3000 - self.energy, 3000/self.AC, self.energy] # siia võiks geenikordajad panna
+        thinking_array = [(3000 - self.energy)*(self.genecode[3]/1000), (3000/self.AC)*(self.genecode[4]/1000), (self.energy)*(self.genecode[5]/1000)] # siia võiks geenikordajad panna
         choice = 0
         choice_value = -inf
         for i in range(len(thinking_array)):
@@ -228,19 +286,20 @@ class Organism:
 
             if bestdistance <= ((self.width / 2) + (bestgoal.width / 2)):
                 if not bestgoal == self and ((bestgoal in food_list) or (bestgoal in organism_list)):
-                    self.eat(1000, 50, bestgoal)
+                    self.eat(1000, self.genecode[7]/10, bestgoal)
                     if self.vx > 0 or self.vy > 0:
                         self.accelerate(-self.vx, -self.vy, 5)
             elif x_dir != 0 or y_dir != 0:
                 self.accelerate(x_dir, y_dir, 5)
 
         elif choice == 1: # change own shape
-            self.grow(200)
+            self.grow(self.genecode[8]/2)
 
         elif choice == 2: # divide
-            self.divide(1000, 400)
+            self.divide(1000, self.genecode[6])
 
     def motor(self):
+        self.age += 1
         self.exist()
         self.move()
         #self.collide()
@@ -288,6 +347,7 @@ class Organism:
             self.vy *= (1000 + a_s)/1000
 
     def divide(self, t, ratio):
+        self.divisions += 1
 
         efficiency = (self.HP/1000)*(t/birth_dif)
 
@@ -297,8 +357,8 @@ class Organism:
         self.energy *= ((1000 - ratio)/1000)
         
         # Hope I don't break it now
-        self.energy = self.energy + (organism_list[0].genecode[2])
-        self.mass = self.mass + (organism_list[0].genecode[1])
+        self.energy += self.genecode[2]
+        self.mass += self.genecode[1]
 
         w = self.width * ((ratio / 1000)**(1/2))
 
@@ -318,6 +378,8 @@ class Organism:
         self.energy -= e
         self.width += log(e)/(self.AC*(3/2))
         self.AC = float((self.width / 4) * self.mass / exist_dif)
+        if self.AC < 1:
+            self.markedfordeath = True
 
         screen.coords(self.body, (self.cx - (self.width / 2)) * scale, (self.cy - (self.width / 2)) * scale, (self.cx + (self.width / 2)) * scale, (self.cy + (self.width / 2)) * scale)
 
@@ -325,7 +387,7 @@ class Organism:
     # state resolution
 
     def exist(self):
-        self.energy -= self.mass * (exist_dif/(1000*100000)) * (1 / self.AC) * (1000 / self.HP)
+        self.energy -= (self.mass ** 2) * (exist_dif/(1000*100000)) * (1 / self.AC) * (1000 / self.HP)
         if self.energy <= 0:
             self.die()
 
@@ -454,7 +516,7 @@ def create_initial_population(start_pop, dna_length):
 
         genecode = []
         for j in range(dna_length):
-            genecode.append(randint(0, 255))
+            genecode.append(randint(400, 600))
         Organism(m, e, x, y, w, genecode)
         organism_list[len(organism_list) - 1].early = True
 
@@ -722,7 +784,7 @@ for y in range(y_t_chunkNUM):
 ##Initialize Entities
 
 create_food()
-create_initial_population(50, 3)
+create_initial_population(50, 10)
 
 #Main Cycle
 
