@@ -684,7 +684,7 @@ root = Tk()
 
 root.resizable(width=FALSE, height=FALSE)
 root.geometry(str(screenWIDTH)+"x"+str(screenHEIGHT))
-root.title("Evolutsiooni simulatsioon V0.7")
+root.title("Evolutsiooni simulatsioon V1.2")
 
 root.bind("<Left>", leftKey)
 root.bind("<Right>", rightKey)
@@ -729,24 +729,28 @@ l4.pack(side=RIGHT)
 
 # Menu, WiP but is not necessary for program to function
 def hello():
-    print("hello")
+    print("Option is not working yet")
 def about():
-    messagebox.showinfo(title="About",message="Project: Evolution Simulator\nVersion 0.7\n")
+    messagebox.showinfo(title="About",message="Project: Evolution Simulator\nVersion 1.2\n")
+def howto():
+    messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve\nYou can choose variables from the options menu")
 def color_chooser():
     color = colorchooser.askcolor(title="Choose a background color")
     color_name = color[1]
     for i in range(len(chunk_list_for_menu)):
         screen.itemconfig(chunk_list_for_menu[i],fill=color_name)
+def initpop():
+    label12 = Label(screen,text="WiP").pack()
     
-def howto():
-    messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve\nYou can choose variables from the options menu")
     
 menubar = Menu(root)
 
 options_menu = Menu(menubar,tearoff=0)
-options_menu.add_command(label="Initial population",command=hello)
 options_menu.add_command(label="Background color",command=color_chooser)
-options_menu.add_command(label="Option3",command=hello)
+options_menu.add_command(label="Initial population",command=initpop)
+options_menu.add_command(label="Option 1",command=hello)
+options_menu.add_command(label="Option 2",command=hello)
+options_menu.add_command(label="Option 3",command=hello)
 menubar.add_cascade(label="Options",menu=options_menu)
 
 help_menu = Menu(menubar,tearoff=0)
