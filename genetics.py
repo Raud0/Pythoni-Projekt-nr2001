@@ -339,8 +339,6 @@ class Organism:
         del organism_list[organism_list.index(self)]
         del self
         
-    def collide(self):
-       None
 
 class food:
 
