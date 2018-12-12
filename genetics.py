@@ -73,7 +73,7 @@ mutnt_dif = 1000
 lucky_dif = 1000
 srvvl_dif = 1000
 union_dif = 2000
-sunlight = 4
+sunlight = 2.5
 organism_list = []
 food_list = []
 
@@ -189,6 +189,7 @@ class Organism:
     # Organism systems
 
     def brain(self):
+
         thinking_array = [3000 - self.energy, 3000/self.AC, self.energy] # siia võiks geenikordajad panna
         choice = 0
         choice_value = -inf
@@ -202,6 +203,7 @@ class Organism:
             if Default:
                 nearby_entities = []
                 bestgoal = self
+                bestvalue = -inf
                 bestdistance = inf
 
                 y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM - 1)
@@ -213,21 +215,22 @@ class Organism:
                     for x in range(x_floor, x_ceil + 1):
                         for entity in itertools.chain(world_space[y][x]):
                             if entity != self:
-                                nearby_entities.append(entity)
+                                distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
+                                value = entity.width/distance
+                                if value > bestvalue:
+                                    bestvalue = value
+                                    bestdistance = distance
+                                    bestgoal = entity
 
-                for entity in nearby_entities:
-                    if type(entity) == food:
-                        distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
-                        if distance < bestdistance:
-                            bestdistance = distance
-                            bestgoal = entity
-
-                x_dir = bestgoal.cx - self.cx
-                y_dir = bestgoal.cy - self.cy
+                if bestgoal is not None:
+                    x_dir = bestgoal.cx - self.cx
+                    y_dir = bestgoal.cy - self.cy
 
             if bestdistance <= ((self.width / 2) + (bestgoal.width / 2)):
-                if (bestgoal in food_list) or (bestgoal in organism_list):
-                    self.eat(1000, bestgoal)
+                if not bestgoal == self and ((bestgoal in food_list) or (bestgoal in organism_list)):
+                    self.eat(1000, 50, bestgoal)
+                    if self.vx > 0 or self.vy > 0:
+                        self.accelerate(-self.vx, -self.vy, 5)
             elif x_dir != 0 or y_dir != 0:
                 self.accelerate(x_dir, y_dir, 5)
 
@@ -244,29 +247,28 @@ class Organism:
 
     # actions
 
-    def eat(self, energy_ratio, entity):
+    def eat(self, energy_ratio, bite_size, entity):
         if not entity.markedfordeath:
             before = self.energy
-            energy_amount = 0
-            energy_amount += entity.energy * (1000 / (cnsme_dif * 10))
-            energy_amount += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif * 10))
-            eating_time = randint(2,10) # Needs configuration
-            energy_gain = (energy_amount/(2*eating_time)) + 2*eating_time
-            while eating_time > 0:
-                self.energy += energy_gain
-                eating_time -= 1
-            self.mass += ((1000 - energy_ratio) / 1000) * entity.mass * (1000 / cnsme_dif)
+            bite = bite_size
+            entity.energy -= bite
+            entity.mass -= bite
+            if entity.mass < 0 or entity.energy < 0:
+                bite_size += (entity.mass + entity.energy)
+                entity.markedfordeath = True
+            bite *= sigmoid(-(entity.AC-20)/10)*sigmoid(-(bite_size-200)/100)
+            self.energy += bite * (1000 / (cnsme_dif * 10)) * (energy_ratio/1000)
+            self.mass += bite * (1000 / cnsme_dif) * ((1000-energy_ratio)/1000)
             after = self.energy
             if after < before:
-                print("Organism gained negative energy through eating?",after-before)
-            entity.die()
+                print("Organism gained negative energy through eating?", after-before)
 
 
 
 
     def accelerate(self, x, y, e):
-        ex = e * (x / (abs(x) + abs(y)))
-        ey = e * (y / (abs(x) + abs(y)))
+        ex = e * (x / (fabs(x) + fabs(y)))
+        ey = e * (y / (fabs(x) + fabs(y)))
         self.energy -= e*(accel_dif/(1000*10))
 
         accel_mods = world_space_terrain[floor(self.cy/t_chunkHEIGHT)][floor(self.cx/t_chunkWIDTH)][0:4]
@@ -359,6 +361,9 @@ class food:
         self.y_chunk = 0
         self.chunk_range = 2
 
+        self.AC = float((self.width / 4) * self.mass / exist_dif)
+        self.HP = float(1000)
+
         self.markedfordeath = False
         self.tree_level = tree_level
         self.expansionlimit = 1000 + 500*(self.tree_level**2)
@@ -378,7 +383,6 @@ class food:
         food_list.append(self)
 
     def brain(self):
-
         if self.energy > self.expansionlimit:
             self.expand(200)
         else:
@@ -386,33 +390,32 @@ class food:
 
     def motor(self):
         chunk_fertility = world_space_fertility[self.y_chunk][self.x_chunk]
-        if not self.markedfordeath:
-            self.energy += chunk_fertility
-            self.mass += chunk_fertility
-            if self.energy < 10 or self.mass < 10:
-                self.markedfordeath = True
-            else:
-                if chunk_fertility > 5:
-                    plants = []
-                    for plant in world_space[self.y_chunk][self.x_chunk]:
-                        if type(plant) == food:
-                            if plant != self and not plant.markedfordeath and plant.tree_level == self.tree_level:
-                                distance = min(fabs(plant.cx - self.cx), fabs(plant.cy - self.cy)) - plant.width/2
-                                if distance < self.width/2:
-                                    plants.append(plant)
+        self.energy += chunk_fertility
+        self.mass += chunk_fertility
+        if self.energy < 10 or self.mass < 10:
+            self.markedfordeath = True
+        else:
+            if chunk_fertility > 5:
+                plants = []
+                for plant in world_space[self.y_chunk][self.x_chunk]:
+                    if type(plant) == food:
+                        if plant != self and not plant.markedfordeath and plant.tree_level == self.tree_level:
+                            distance = min(fabs(plant.cx - self.cx), fabs(plant.cy - self.cy)) - plant.width/2
+                            if distance < self.width/2:
+                                plants.append(plant)
 
-                    if len(plants) > 4:
-                        energy = self.energy
-                        mass = self.mass
-                        while len(plants) > 5:
-                            del plants[randint(0,len(plants)-1)]
-                        for plant in plants:
-                            energy += plant.energy
-                            mass += plant.mass
-                            plant.markedfordeath = True
+                if len(plants) > 4:
+                    energy = self.energy
+                    mass = self.mass
+                    while len(plants) > 5:
+                        del plants[randint(0,len(plants)-1)]
+                    for plant in plants:
+                        energy += plant.energy
+                        mass += plant.mass
+                        plant.markedfordeath = True
 
-                        food(energy*(1000/union_dif), mass*(1000/union_dif), self.cx, self.cy, self.tree_level+1)
-                        self.markedfordeath = True
+                    food(energy*(1000/union_dif), mass*(1000/union_dif), self.cx, self.cy, self.tree_level+1)
+                    self.markedfordeath = True
         if self.energy < 10 and not self.markedfordeath:
             print("passed through plant with negative energy?!?")
 
@@ -562,15 +565,12 @@ def generation_pass():
     return new_generation
 
 def time_pass():
-    for i in range(len(organism_list) -1, -1, -1):
-        organism_list[i].brain()
-        organism_list[i].motor()
-    for i in range(len(food_list) -1, -1, -1):
-        if not food_list[i].markedfordeath:
-            food_list[i].brain()
-            food_list[i].motor()
+    for entity in itertools.chain(organism_list, food_list):
+        if not entity.markedfordeath:
+            entity.brain()
+            entity.motor()
         else:
-            food_list[i].die()
+            entity.die()
 
 def update_chunks():
     global world_space
@@ -596,6 +596,7 @@ def update_chunks():
         for x in range(x_chunkNUM):
             count = float(world_space_fertility[y][x])
             world_space_fertility[y][x] = -(count-10)*(count-20)*log(count+4)*(1/30)+5
+
 
 ##Create Window
 

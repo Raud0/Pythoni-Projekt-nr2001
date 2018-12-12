@@ -48,25 +48,25 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="25" />
+          <entry key="project.closed" value="28" />
           <entry key="project.open.time.11" value="1" />
-          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="9" />
           <entry key="project.open.time.5" value="6" />
-          <entry key="project.open.time.6" value="3" />
+          <entry key="project.open.time.6" value="5" />
           <entry key="project.open.time.7" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="25" />
+          <entry key="project.opened" value="28" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="30910" />
+          <entry key="py" value="32519" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="30910" />
+          <entry key="Python" value="32519" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,8 +86,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="711" column="141" selection-start-line="711" selection-start-column="141" selection-end-line="711" selection-end-column="141" />
+            <state relative-caret-position="323">
+              <caret line="258" column="77" selection-start-line="258" selection-start-column="77" selection-end-line="258" selection-end-column="77" />
               <folding>
                 <element signature="e#0#64#0" expanded="true" />
               </folding>
@@ -107,6 +107,7 @@
       <find>create_food</find>
       <find>food</find>
       <find>marke</find>
+      <find>self.markedfordeath</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -123,7 +124,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1673" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
     <option name="height" value="1096" />
@@ -133,6 +134,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -144,7 +146,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,7 +279,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.057955742" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -336,8 +337,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="711" column="141" selection-start-line="711" selection-start-column="141" selection-end-line="711" selection-end-column="141" />
+        <state relative-caret-position="323">
+          <caret line="258" column="77" selection-start-line="258" selection-start-column="77" selection-end-line="258" selection-end-column="77" />
           <folding>
             <element signature="e#0#64#0" expanded="true" />
           </folding>
