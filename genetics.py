@@ -4,9 +4,7 @@ from random import randint, choice
 import time
 import itertools
 import copy
-
 # Input Functions
-
 
 def leftKey(event):
     screen.xview(SCROLL, -10, UNITS)
@@ -249,13 +247,22 @@ class Organism:
     def eat(self, energy_ratio, entity):
         if not entity.markedfordeath:
             before = self.energy
-            self.energy += entity.energy * (1000 / (cnsme_dif*10))
-            self.energy += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif*10))
-            self.mass += ((1000-energy_ratio) / 1000) * entity.mass * (1000/cnsme_dif)
+            energy_amount = 0
+            energy_amount += entity.energy * (1000 / (cnsme_dif * 10))
+            energy_amount += (energy_ratio / 1000) * entity.energy * (1000 / (cnsme_dif * 10))
+            eating_time = randint(2,10) # Needs configuration
+            energy_gain = (energy_amount/(2*eating_time)) + 2*eating_time
+            while eating_time > 0:
+                self.energy += energy_gain
+                eating_time -= 1
+            self.mass += ((1000 - energy_ratio) / 1000) * entity.mass * (1000 / cnsme_dif)
             after = self.energy
             if after < before:
                 print("Organism gained negative energy through eating?",after-before)
             entity.die()
+
+
+
 
     def accelerate(self, x, y, e):
         ex = e * (x / (abs(x) + abs(y)))
@@ -332,8 +339,6 @@ class Organism:
         del organism_list[organism_list.index(self)]
         del self
         
-    def collide(self):
-       None
 
 class food:
 
