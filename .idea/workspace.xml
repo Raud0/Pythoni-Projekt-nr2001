@@ -47,26 +47,26 @@
     <session id="-307152643">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="32" />
+          <entry key="project.closed" value="33" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.3" value="3" />
           <entry key="project.open.time.4" value="11" />
-          <entry key="project.open.time.5" value="7" />
+          <entry key="project.open.time.5" value="8" />
           <entry key="project.open.time.6" value="5" />
           <entry key="project.open.time.7" value="4" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="32" />
+          <entry key="project.opened" value="33" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="65" />
-          <entry key="py" value="35056" />
+          <entry key="py" value="35059" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="35121" />
+          <entry key="Python" value="35124" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,11 +86,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/genetics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="546">
-              <caret line="383" column="69" lean-forward="true" selection-start-line="383" selection-start-column="69" selection-end-line="383" selection-end-column="69" />
+            <state relative-caret-position="189">
+              <caret line="792" column="1" selection-start-line="792" selection-start-column="1" selection-end-line="792" selection-end-column="1" />
               <folding>
                 <element signature="e#0#68#0" expanded="true" />
-                <marker date="1544652251103" expanded="true" signature="5081:5532" ph="..." />
+                <marker date="1544652933420" expanded="true" signature="5081:5532" ph="..." />
               </folding>
             </state>
           </provider>
@@ -110,6 +110,7 @@
       <find>self.markedfordeath</find>
       <find>genecode</find>
       <find>print</find>
+      <find>river</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -136,7 +137,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -148,6 +148,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -340,11 +341,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/genetics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="383" column="69" lean-forward="true" selection-start-line="383" selection-start-column="69" selection-end-line="383" selection-end-column="69" />
+        <state relative-caret-position="189">
+          <caret line="792" column="1" selection-start-line="792" selection-start-column="1" selection-end-line="792" selection-end-column="1" />
           <folding>
             <element signature="e#0#68#0" expanded="true" />
-            <marker date="1544652251103" expanded="true" signature="5081:5532" ph="..." />
+            <marker date="1544652933420" expanded="true" signature="5081:5532" ph="..." />
           </folding>
         </state>
       </provider>

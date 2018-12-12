@@ -724,7 +724,6 @@ l4.pack(side=RIGHT)
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
 screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
-jõgi = screen.create_line(river(),fill="blue",width=10)
 
 #Lake
 #screen.create_oval(t_chunkWIDTH * randint(1,100), t_chunkHEIGHT * randint(1,100), t_chunkWIDTH * (randint(10,20) + 1), t_chunkHEIGHT * (randint(10,20) + 1),fill="blue")
@@ -791,6 +790,7 @@ for y in range(y_t_chunkNUM):
         screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), fill=hex_col, outline="")
 
         world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy)
+#jõgi = screen.create_line(river(),fill="blue",width=10)
 
 ##Initialize Entities
 
