@@ -133,6 +133,8 @@ class Organism:
         self.age = 1
         self.divisions = 1
 
+        self.friends = [self]
+
         self.colour_mode = 2
         if self.colour_mode == 0:
             r_col = str(hex(self.genecode[0])).replace("0x", "").rjust(2, "0")
@@ -259,7 +261,6 @@ class Organism:
         if choice == 0: # accelerate towards nearest food
             Default = True
             if Default:
-                nearby_entities = []
                 bestgoal = self
                 bestvalue = -inf
                 bestdistance = inf
@@ -272,7 +273,11 @@ class Organism:
                 for y in range(y_floor, y_ceil + 1):
                     for x in range(x_floor, x_ceil + 1):
                         for entity in itertools.chain(world_space[y][x]):
-                            if entity != self:
+                            if (type(entity) == Organism) and entity not in self.friends:
+                                should = self.gene_evaluator(self.genecode,entity.genecode)
+                                if should < 0.03:
+                                    self.friends.append(entity)
+                            if entity not in self.friends:
                                 distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
                                 value = entity.width/distance
                                 if value > bestvalue:
@@ -390,7 +395,6 @@ class Organism:
 
     def exist(self):
         energy_loss = self.mass * ((self.width/2)**2) * pi * (exist_dif/(1000*1000000)) * (1000 / self.HP) * (1/self.AC)
-        print(energy_loss)
         self.energy -= energy_loss
         if self.energy <= 0:
             self.die()
