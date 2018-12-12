@@ -733,7 +733,11 @@ def hello():
 def about():
     messagebox.showinfo(title="About",message="Project: Evolution Simulator\nVersion 0.7\n")
 def color_chooser():
-    color = colorchooser.askcolor(title="Pick an organism color!")
+    color = colorchooser.askcolor(title="Choose a background color")
+    color_name = color[1]
+    for i in range(len(chunk_list_for_menu)):
+        screen.itemconfig(chunk_list_for_menu[i],fill=color_name)
+    
 def howto():
     messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve\nYou can choose variables from the options menu")
     
@@ -741,7 +745,7 @@ menubar = Menu(root)
 
 options_menu = Menu(menubar,tearoff=0)
 options_menu.add_command(label="Initial population",command=hello)
-options_menu.add_command(label="Organism color",command=color_chooser)
+options_menu.add_command(label="Background color",command=color_chooser)
 options_menu.add_command(label="Option3",command=hello)
 menubar.add_cascade(label="Options",menu=options_menu)
 
@@ -755,7 +759,7 @@ root.config(menu=menubar)
 #Create Screen
 
 screen = Canvas(root, width=worldWIDTH, height=worldHEIGHT, xscrollincrement="1", yscrollincrement="1")
-screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT)
+screen.create_rectangle(0, 0, worldWIDTH, worldHEIGHT,width=10)
 
 #Lake
 screen.pack()
@@ -776,6 +780,7 @@ for y in range(ceil(worldHEIGHT/chunkHEIGHT)):
 world_space_fertility = copy.deepcopy(world_space)
 
 ##World Terrain
+chunk_list_for_menu = []
 world_space_terrain = []
 y_t_chunkNUM = 0
 x_t_chunkNUM = 0
@@ -819,10 +824,10 @@ for y in range(y_t_chunkNUM):
         b_col = str(hex(slope)).replace("0x", "").rjust(2, "0")
         hex_col = "#" + r_col + g_col + b_col
 
-        world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), outline="", fill=hex_col)
+        temp = world_square = screen.create_rectangle(t_chunkWIDTH * x, t_chunkHEIGHT * y, t_chunkWIDTH * (x + 1), t_chunkHEIGHT * (y + 1), outline="", fill=hex_col)
 
         world_space_terrain[y][x] = (a_w, a_e, a_n, a_s, vx, vy, world_square)
-        
+        chunk_list_for_menu.append(temp)
 # Cool lakes
 lake_amount = 10
 for i in range(lake_amount):
@@ -847,7 +852,6 @@ create_food()
 create_initial_population(50, 10)
 
 #Main Cycle
-
 root.update()
 time.sleep(1)
 world_speed = 0.05
