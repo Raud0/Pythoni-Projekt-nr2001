@@ -6,7 +6,6 @@ from statistics import mean
 import time
 import itertools
 import copy
-import numpy as np
 
 
 # Input Functions
