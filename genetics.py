@@ -109,6 +109,11 @@ class Organism:
         self.mass = float(m)
         self.energy = float(e)
 
+        if self.mass < 10 or self.energy < 10:
+            print("stillbirth")
+            del self
+            return
+
         self.vx = 0
         self.vy = 0
 
@@ -124,8 +129,14 @@ class Organism:
         self.chunk_range = 1
 
         self.genecode = genecode
-        self.genecomplexity = self.gene_evaluator(genecode)
 
+        for i in self.genecode:
+            if i <= 0 or i >= 1000:
+                print("monstrous genes")
+                del self
+                return
+
+        self.genecomplexity = self.gene_evaluator(genecode)
         self.elite = False
         self.early = False
         self.child = False
@@ -136,6 +147,7 @@ class Organism:
         self.divisions = 1
 
         self.friends = [self]
+        self.enemies = []
 
         self.colour_mode = 2
         if self.colour_mode == 0:
@@ -251,8 +263,16 @@ class Organism:
         # Geen 6: Division Ratio
         # Geen 7: Bite size
         # Geen 8: Growth Ratio
+        # Geen 9: Enemy Memory Length
+        # Geen 10: Bravery
+        # Geen 11: Recovery
+        if self.HP <= 0:
+            self.HP = 1
+        if self.AC <= 0:
+            self.markedfordeath = True
+            return
 
-        thinking_array = [(3000 - self.energy)*(self.genecode[3]/1000), (3000/self.AC)*(self.genecode[4]/1000), (self.energy)*(self.genecode[5]/1000)] # siia võiks geenikordajad panna
+        thinking_array = [(3000 - self.energy)*(self.genecode[3]/1000), (3000/self.AC)*(self.genecode[4]/1000), (self.energy)*(self.genecode[5]/1000), (self.energy)*(self.genecode[11]/self.HP)] # siia võiks geenikordajad panna
         choice = 0
         choice_value = -inf
         for i in range(len(thinking_array)):
@@ -266,6 +286,8 @@ class Organism:
                 bestgoal = self
                 bestvalue = -inf
                 bestdistance = inf
+                worstgoal = self
+                worstvalue = -inf
 
                 y_floor = min(max(self.y_chunk - self.chunk_range, 0), y_chunkNUM - 1)
                 y_ceil = max(min(self.y_chunk + self.chunk_range, y_chunkNUM - 1), 0)
@@ -279,7 +301,16 @@ class Organism:
                                 should = self.gene_evaluator(self.genecode,entity.genecode)
                                 if should < 0.05:
                                     self.friends.append(entity)
-                            if entity not in self.friends:
+                                else:
+                                    if entity.width > self.width:
+                                        self.enemies.append(entity)
+                            if entity in self.enemies:
+                                distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
+                                value = entity.mass*entity.width/(distance*distance)*(self.genecode[10]/500)
+                                if value > worstvalue:
+                                    worstvalue = value
+                                    worstgoal = entity
+                            elif entity not in self.friends:
                                 distance = (fabs(self.cx - entity.cx) ** 2 + fabs(self.cy - entity.cy) ** 2) ** (1 / 2)
                                 value = entity.width/distance
                                 if value > bestvalue:
@@ -287,17 +318,24 @@ class Organism:
                                     bestdistance = distance
                                     bestgoal = entity
 
-                if bestgoal is not None:
-                    x_dir = bestgoal.cx - self.cx
-                    y_dir = bestgoal.cy - self.cy
+                x_dir = 0
+                y_dir = 0
+                if bestvalue > worstvalue:
+                    if bestgoal != self:
+                        x_dir += bestgoal.cx - self.cx
+                        y_dir += bestgoal.cy - self.cy
+                else:
+                    if worstgoal != self:
+                        x_dir += self.cx - worstgoal.cx
+                        y_dir += self.cy - worstgoal.cy
 
-            if bestdistance <= ((self.width / 2) + (bestgoal.width / 2)):
-                if not bestgoal == self and ((bestgoal in food_list) or (bestgoal in organism_list)):
-                    self.eat(1000, self.genecode[7]/10, bestgoal)
-                    if self.vx > 0 or self.vy > 0:
-                        self.accelerate(-self.vx, -self.vy, 5)
-            elif x_dir != 0 or y_dir != 0:
-                self.accelerate(x_dir, y_dir, 5)
+                if bestdistance <= ((self.width / 2) + (bestgoal.width / 2)):
+                    if not bestgoal == self and ((bestgoal in food_list) or (bestgoal in organism_list)):
+                        self.eat(1000, self.genecode[7]/10, bestgoal)
+                        if self.vx > 0 or self.vy > 0:
+                            self.accelerate(-self.vx, -self.vy, 5)
+                elif x_dir != 0 or y_dir != 0:
+                    self.accelerate(x_dir, y_dir, 5)
 
         elif choice == 1: # change own shape
             self.grow(self.genecode[8]/2)
@@ -305,7 +343,15 @@ class Organism:
         elif choice == 2: # divide
             self.divide(1000, self.genecode[6])
 
+        elif choice == 3:
+            if self.HP < 800:
+               self.recover(self.genecode[11])
+
     def motor(self):
+        if len(self.enemies) > self.genecode[9]/100 and len(self.enemies) > 0:
+            del self.enemies[0]
+        if self.HP <= 0:
+            self.HP = 1
         self.age += 1
         self.exist()
         self.move()
@@ -315,19 +361,26 @@ class Organism:
 
     def eat(self, energy_ratio, bite_size, entity):
         if not entity.markedfordeath:
-            before = self.energy
-            bite = bite_size
-            entity.energy -= bite
-            entity.mass -= bite
-            if entity.mass < 0 or entity.energy < 0:
-                bite_size += (entity.mass + entity.energy)
-                entity.markedfordeath = True
-            bite *= sigmoid(-(entity.AC-20)/10)*sigmoid(-(bite_size-200)/100)
-            self.energy += bite * (1000 / (cnsme_dif * 10)) * (energy_ratio/1000)
-            self.mass += bite * (1000 / cnsme_dif) * ((1000-energy_ratio)/1000)
-            after = self.energy
-            if after < before:
-                print("Organism gained negative energy through eating?", after-before)
+            if type(entity) == Organism and entity.HP > 300:
+                bite = bite_size
+                entity.vx += self.vx * (bite_size/300)
+                entity.vy += self.vy * (bite_size/3000)
+                self.energy -= bite*0.05
+                bite *= sigmoid(-(entity.AC - 20) / 10) * sigmoid(-(bite_size - 200) / 100)
+                entity.HP -= bite*(1000/entity.HP)
+                entity.HP -= self.mass * ((self.vx)**2 + (self.vy)**2)**(1/2) / 100
+                if entity.HP <= 0:
+                    entity.HP = 1
+            else:
+                bite = bite_size
+                entity.energy -= bite
+                entity.mass -= bite
+                if entity.mass < 0 or entity.energy < 0:
+                    bite_size += (entity.mass + entity.energy)
+                    entity.markedfordeath = True
+                bite *= sigmoid(-(entity.AC-20)/10)*sigmoid(-(bite_size-200)/100)
+                self.energy += bite * (1000 / (cnsme_dif * 10)) * (energy_ratio/1000)
+                self.mass += bite * (1000 / cnsme_dif) * ((1000-energy_ratio)/1000)
 
 
 
@@ -342,22 +395,26 @@ class Organism:
         a_e = accel_mods[1]
         a_n = accel_mods[2]
         a_s = accel_mods[3]
-        self.vx += (ex / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
+        self.vx += (ex / self.mass) * (accel_dif/1000*10) * (self.HP/1000)
         if self.vx < 0:
             self.vx *= (1000 + a_w)/1000
         elif self.vx > 0:
             self.vx *= (1000 + a_e)/1000
-        self.vy += (ey / self.mass) * (accel_dif/1000*10) * (1000 / self.HP)
+        self.vy += (ey / self.mass) * (accel_dif/1000*10) * (self.HP/1000)
         if self.vy < 0:
             self.vy *= (1000 + a_n)/1000
         elif self.vy > 0:
             self.vy *= (1000 + a_s)/1000
 
     def divide(self, t, ratio):
+        efficiency = (self.HP/1000)*(t/birth_dif) * (10-self.genecomplexity)/10
+        if efficiency < 0 or ratio < 0:
+            return
+        if self.width < 0:
+            self.markedfordeath = True
+            return
+
         self.divisions += 1
-
-        efficiency = (self.HP/1000)*(t/birth_dif)
-
         m = self.mass * (ratio / 1000) * efficiency
         self.mass *= ((1000 - ratio)/1000)
         e = (self.energy * (ratio / 1000) * efficiency)
@@ -367,11 +424,11 @@ class Organism:
         self.energy += self.genecode[2]
         self.mass += self.genecode[1]
 
-        w = self.width * ((ratio / 1000)**(1/2))
+        w = self.width * (((ratio + 1)/ 1000)**(1/2))
 
         self.AC = float((self.width / 4) * self.mass / exist_dif)
 
-        self.width *= (((1000 - ratio)/1000)**(1/2))
+        self.width *= (((1001 - ratio)/1000)**(1/2))
         x_dir = choice([-1, 1])
         y_dir = choice([-1, 1])
         x = self.cx + x_dir*(self.width + w) / 4
@@ -388,19 +445,27 @@ class Organism:
 
     def grow(self, e):
         self.energy -= e
-        self.width += log(e)/(self.AC*(3/2))
+        self.width += log(e+2)/((self.AC*(3/2))*log(self.width+10))
         self.AC = float((self.width / 4) * self.mass / exist_dif)
         if self.AC < 1:
             self.markedfordeath = True
 
         screen.coords(self.body, (self.cx - (self.width / 2)) * scale, (self.cy - (self.width / 2)) * scale, (self.cx + (self.width / 2)) * scale, (self.cy + (self.width / 2)) * scale)
 
+    def recover(self, e):
+        missingHP = 1000 - self.HP
+        recovery = missingHP * self.genecode[11]/1000
+        if recovery < self.energy:
+            self.energy -= recovery/2
+            self.HP += recovery
+            if self.HP > 950:
+                self.HP = 950
 
     # state resolution
 
     def exist(self):
         energy_loss = self.mass * ((self.width/2)**2) * pi * (exist_dif/(1000*1000000)) * (1000 / self.HP) * (1/self.AC)
-        self.energy -= energy_loss
+        self.energy -= (energy_loss + self.genecomplexity/30)
         if self.energy <= 0:
             self.die()
 
@@ -733,7 +798,7 @@ def hello():
 def about():
     messagebox.showinfo(title="About",message="Project: Evolution Simulator\nVersion 1.2\n")
 def howto():
-    messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve\nYou can choose variables from the options menu")
+    messagebox.showinfo(title="How to use",message="Just look how the organism live and evolve.\nYou can choose variables from the options menu.\nUse \"Backspace\" and \"Enter\" to control gamespeed, arrowkeys to move and \"Page Up\" and \"Page down\" to zoom.")
 def color_chooser():
     color = colorchooser.askcolor(title="Choose a background color")
     color_name = color[1]
@@ -853,7 +918,8 @@ for i in range(lake_amount):
 ##Initialize Entities
 
 create_food()
-create_initial_population(50, 10)
+minimum_dna_length = 12
+create_initial_population(50, minimum_dna_length)
 
 #Main Cycle
 root.update()
