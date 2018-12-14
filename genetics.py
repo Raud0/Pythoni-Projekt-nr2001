@@ -183,11 +183,9 @@ class Organism:
             g_col = str(hex(floor(g_sum * 255))).replace("0x", "").rjust(2, "0")
             b_col = str(hex(floor(b_sum * 255))).replace("0x", "").rjust(2, "0")
         elif colour_mode == 1:
-            print(self.AC,self.HP,self.age)
             self.ACef = round(32 * sigmoid(float((self.AC - 20) / 10)))
             self.HPef = round(32 * sigmoid(float((self.HP - 500) / 250)))
             self.AGEef = round(32 * sigmoid(-float((self.age - 1000) / 500)))
-            print(self.ACef, self.HPef, self.AGEef)
             r_col = str(hex(max(8 * self.ACef - 1, 0))).replace("0x", "").rjust(2, "0")
             g_col = str(hex(max(8 * self.HPef - 1, 0))).replace("0x", "").rjust(2, "0")
             b_col = str(hex(max(8 * self.AGEef - 1, 0))).replace("0x", "").rjust(2, "0")
@@ -255,11 +253,9 @@ class Organism:
             g_col = str(hex(floor(g_sum*255))).replace("0x", "").rjust(2, "0")
             b_col = str(hex(floor(b_sum*255))).replace("0x", "").rjust(2, "0")
         elif colour_mode == 1:
-            print(self.AC, self.HP, self.age)
             self.ACef = round(32 * sigmoid(float((self.AC - 20) / 10)))
             self.HPef = round(32 * sigmoid(float((self.HP - 500) / 250)))
             self.AGEef = round(32 * sigmoid(-float((self.age - 1000) / 500)))
-            print(self.ACef, self.HPef, self.AGEef)
             r_col = str(hex(max(8 * self.ACef - 1, 0))).replace("0x", "").rjust(2, "0")
             g_col = str(hex(max(8 * self.HPef - 1, 0))).replace("0x", "").rjust(2, "0")
             b_col = str(hex(max(8 * self.AGEef - 1, 0))).replace("0x", "").rjust(2, "0")
@@ -300,6 +296,9 @@ class Organism:
             x = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
             y = -(self.genecode[0]) * (self.genecode[0] - 400) / 40000
             self.fitness_rating = (self.genecode[0] ** 2) * x * y
+
+    def get_AC(self):
+        return float((self.width / 4) * self.mass / exist_dif)
 
     # Organism systems
 
@@ -402,6 +401,7 @@ class Organism:
         self.age += 1
         self.exist()
         self.move()
+        self.AC = self.get_AC()
         #self.collide()
 
     # actions
@@ -479,8 +479,6 @@ class Organism:
         self.mass += self.genecode[1]
 
         w = self.width * (((ratio + 1)/ 1000)**(1/2))
-
-        self.AC = float((self.width / 4) * self.mass / exist_dif)
 
         self.width *= (((1001 - ratio)/1000)**(1/2))
         x_dir = choice([-1, 1])
